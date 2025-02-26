@@ -1,20 +1,18 @@
-import {Button, Space} from "antd";
+import { Button, Space } from 'antd';
 
 const Toolbar = () => {
-    return (
-        <Space className="w-full justify-between">
-            <Space>
-                <h3>Активные звонки</h3>
-                <span>Всего: {/* количество */}</span>
-            </Space>
+  return (
+    <Space className='w-full justify-between'>
+      <Space>
+        <h3>Активные звонки</h3>
+        <span>Всего: {/* количество */}</span>
+      </Space>
 
-            <Button onClick={() => console.log('Modal open')}>
-                Фильтры
-            </Button>
+      <Button onClick={() => console.log('Modal open')}>Фильтры</Button>
 
-            {/* Модальное окно с фильтрами */}
-        </Space>
-    );
-}
+      {/* Модальное окно с фильтрами */}
+    </Space>
+  );
+};
 
-export default Toolbar
+export default Toolbar;

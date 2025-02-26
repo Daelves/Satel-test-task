@@ -1,11 +1,15 @@
-import {$listeningCall} from "../model.ts";
-import {useUnit} from "effector-react";
+import React, { useEffect } from 'react';
+import ListeningCard from "./ListeningCard/ListeningCard.tsx";
+import {resetListening} from "../model/listening-card.ts";
 
-const listeningCallCard = () => {
-    const listeningCall = useUnit($listeningCall)
+const ListeningCallCard: React.FC = () => {
+  useEffect(() => {
+    return () => {
+      resetListening();
+    };
+  }, []);
 
-    return (<>this is player</>)
-}
+  return <ListeningCard />;
+};
 
-export default listeningCallCard
-
+export default ListeningCallCard;
