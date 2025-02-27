@@ -14,14 +14,16 @@ import {
   togglePause,
   startRecordingFx,
   stopRecordingFx,
-  openPhoneSelectModal,
-  $listeningCall,
 } from '../../model/listeningСard.ts';
-import { stopListeningFx } from '../../model';
+import { $listeningCall, stopListeningFx } from '../../model';
+import useModal from '../../../../shared/modals/useModal.ts';
 
 const ControlButtons: React.FC = () => {
   const isPaused = useUnit($isPaused);
   const listeningCall = useUnit($listeningCall);
+
+  const { open: openPhoneSelectModal } = useModal('phoneSelect');
+  const { open: openDownloadModal } = useModal('download');
 
   if (!listeningCall) return null;
 
@@ -39,10 +41,15 @@ const ControlButtons: React.FC = () => {
 
   const handleRecordStop = () => {
     stopRecordingFx(listeningCall.id);
+    openDownloadModal({ callId: listeningCall.id });
   };
 
   const handleAddToControlClick = () => {
-    openPhoneSelectModal();
+    openPhoneSelectModal({
+      onSelectPhone: (phone: string) => {
+        console.log('Selected phone:', phone);
+      },
+    });
   };
 
   return (
