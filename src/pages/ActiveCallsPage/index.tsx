@@ -1,12 +1,23 @@
-import { useUnit } from 'effector-react';
 import { Space } from 'antd';
 import Toolbar from './components/Toolbar.tsx';
-import ListeningCallCard from './components/ListeningCallCard.tsx';
-import CallsTable from './components/CallsTable.tsx';
-import {$listeningCall} from "./model.ts";
+import CallsTable from './components/CallsTable/CallsTable.tsx';
+import { useEffect } from 'react';
+import { createWebSocketConnection } from '../../api/websocket.ts';
 
 const ActiveCallsPage = () => {
-  const listeningCall = useUnit($listeningCall);
+  useEffect(() => {
+    const wsConnection = createWebSocketConnection();
+
+    wsConnection.onCallsList = (callsList) => {
+      updateCallsList(callsList);
+    };
+
+    wsConnection.onCallUpdate = (callUpdate) => {};
+
+    return () => {
+      wsConnection.disconnect();
+    };
+  }, []);
 
   return (
     <Space
@@ -19,9 +30,6 @@ const ActiveCallsPage = () => {
       }}
     >
       <Toolbar />
-
-      {listeningCall && <ListeningCallCard />}
-
       <CallsTable />
     </Space>
   );

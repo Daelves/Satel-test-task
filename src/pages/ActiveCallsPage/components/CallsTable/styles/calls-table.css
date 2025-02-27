@@ -1,0 +1,59 @@
+.active-listening-row {
+    background-color: #e6f7ff !important;
+}
+
+/* Таблица активных звонков */
+.calls-table-container {
+    margin: 16px 0;
+}
+
+.ant-table-cell {
+    vertical-align: middle !important;
+}
+
+/* Стили для кнопок подключения */
+.calls-table-container .ant-btn {
+    min-width: 110px;
+}
+
+/* Стили для иконок */
+.recording-icon {
+    color: #52c41a;
+    font-size: 18px;
+}
+
+.not-recording-icon {
+    color: #ff4d4f;
+    font-size: 18px;
+}
+
+.was-listened-icon {
+    color: #1890ff;
+    font-size: 16px;
+}
+
+/* Стили для Toolbar */
+.calls-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+.total-calls {
+    margin-right: 24px;
+}
+
+/* Стили для модальных окон */
+.ant-modal-mask {
+    backdrop-filter: blur(2px);
+}
