@@ -11,8 +11,8 @@ import {
 import TimerDisplay from './TimerDisplay';
 import ControlButtons from './ControlButtons';
 import PhoneSelectModal from './PhoneSelectModal';
-import RuleModal from './RuleModal';
-import DownloadModal from './DownloadModal';
+import RuleModal from './modals/RuleModal.tsx';
+import DownloadModal from './modals/DownloadModal.tsx';
 
 const { Title } = Typography;
 
