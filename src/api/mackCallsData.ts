@@ -6,11 +6,11 @@ import { CallRecord } from '../pages/ActiveCallsPage/model/callsTable.ts';
  */
 
 const generateAppealsId = (): string => {
-  return `AP-${Math.floor(100000 + Math.random() * 900000)}`;
+  return `${Math.floor(100000 + Math.random() * 900000)}`;
 };
 
 const generateCallId = (): string => {
-  return `CALL-${Math.floor(100000 + Math.random() * 900000)}`;
+  return `${Math.floor(100000 + Math.random() * 900000)}`;
 };
 
 const generatePhoneNumber = (): string => {
@@ -19,8 +19,8 @@ const generatePhoneNumber = (): string => {
 
 const generateRecentDate = (): Date => {
   const now = new Date();
-  const hoursAgo = Math.floor(Math.random() * 24); // От 0 до 24 часов назад
-  const minutesAgo = Math.floor(Math.random() * 60); // От 0 до 60 минут назад
+  const hoursAgo = Math.floor(Math.random());
+  const minutesAgo = Math.floor(Math.random() * 30);
 
   now.setHours(now.getHours() - hoursAgo);
   now.setMinutes(now.getMinutes() - minutesAgo);

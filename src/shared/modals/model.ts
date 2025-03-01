@@ -1,8 +1,9 @@
 import { createDomain } from 'effector';
-import { ModalComponent, ModalState } from './types.ts';
+import { ModalState } from './types.ts';
+import React from 'react';
 
 // Домен для модальных окон
-const modalsDomain = createDomain('modals');
+const modalsDomain = createDomain('modal');
 
 export const openModal = modalsDomain.createEvent<{
   key: string;
@@ -11,60 +12,37 @@ export const openModal = modalsDomain.createEvent<{
 export const closeModal = modalsDomain.createEvent<string>();
 export const closeAllModals = modalsDomain.createEvent();
 
-export const $modalsState = modalsDomain.createStore<
-  Record<string, ModalState>
+export const $modalsState = modalsDomain.createStore<ModalState>({
+  isOpen: false,
+  key: null,
+  params: {},
+});
+
+export const $registeredModals = modalsDomain.createStore<
+  Record<string, React.ComponentType<any>>
 >({});
 
-// Реестр модальных окон
-export interface ModalRegistry {
-  [key: string]: ModalComponent;
-}
-
-export const modalsRegistry: ModalRegistry = {};
-
-export const registerModal = (key: string, component: ModalComponent): void => {
-  modalsRegistry[key] = component;
-
-  $modalsState.setState((state) => ({
+export const registerModal = (
+  key: string,
+  component: React.ComponentType<any>
+) => {
+  $registeredModals.setState((state) => ({
     ...state,
-    [key]: {
-      isVisible: false,
-      params: component.modalConfig?.defaultParams || {},
-    },
+    [key]: component,
   }));
 };
 
 $modalsState
-  .on(openModal, (state, { key, params = {} }) => {
-    if (!modalsRegistry[key]) {
-      console.error(`Modal with key "${key}" is not registered`);
-      return state;
-    }
-
-    return {
-      ...state,
-      [key]: {
-        isVisible: true,
-        params: {
-          ...(state[key]?.params || {}),
-          ...(modalsRegistry[key].modalConfig?.defaultParams || {}),
-          ...params,
-        },
-      },
-    };
-  })
-  .on(closeModal, (state, key) => {
-    if (!state[key]) return state;
-
-    return {
-      ...state,
-      [key]: {
-        ...state[key],
-        isVisible: false,
-      },
-    };
-  })
-  .reset(closeAllModals);
-
-export const resetModals = modalsDomain.createEvent();
-$modalsState.reset(resetModals);
+  .on(openModal, (_, { key, params }) => ({
+    isOpen: true,
+    key,
+    params: params || {},
+  }))
+  .on(closeModal, (state, closedKey) =>
+    state.key === closedKey ? { isOpen: false, key: null, params: {} } : state
+  )
+  .on(closeAllModals, () => ({
+    isOpen: false,
+    key: null,
+    params: {},
+  }));

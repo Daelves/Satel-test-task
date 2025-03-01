@@ -1,22 +1,80 @@
 .active-listening-row {
-  background-color: #e6f7ff !important;
+  background-color: #f6ffed !important;
+}
+
+/* Рамка для выделенной строки */
+.active-listening-row td {
+  border-top: 1px solid #b7eb8f !important;
+  border-bottom: 1px solid #b7eb8f !important;
+}
+
+.active-listening-row td:first-child {
+  border-left: 1px solid #b7eb8f !important;
+}
+
+.active-listening-row td:last-child {
+  border-right: 1px solid #b7eb8f !important;
 }
 
 /* Таблица активных звонков */
 .calls-table-container {
   margin: 16px 0;
+  width: 100%;
+}
+
+.calls-table-container .ant-table {
+  width: 100%;
+}
+
+.calls-table-container .ant-table-thead > tr > th {
+  background-color: #f5f5f5;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Стиль для адаптивной ширины столбцов */
+.calls-table-container .ant-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (min-width: 1200px) {
+  .calls-table-container .ant-table-wrapper {
+    overflow-x: visible;
+  }
 }
 
 .ant-table-cell {
   vertical-align: middle !important;
-}
-
-/* Стили для кнопок подключения */
-.calls-table-container .ant-btn {
-  min-width: 110px;
+  padding: 12px 16px !important;
 }
 
 /* Стили для иконок */
+.phone-icon {
+  font-size: 18px;
+  color: #52c41a;
+}
+
+.phone-icon.active {
+  color: #1890ff;
+}
+
+.connect-icon {
+  font-size: 18px;
+  color: #52c41a;
+}
+
+.disconnect-icon {
+  font-size: 18px;
+  color: #fff;
+  background-color: #ff4d4f;
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .recording-icon {
   color: #52c41a;
   font-size: 18px;
@@ -29,7 +87,37 @@
 
 .was-listened-icon {
   color: #1890ff;
-  font-size: 16px;
+  font-size: 18px;
+}
+
+/* Стили для отображения участников */
+/* Стили для информационных блоков */
+.listened-info,
+.recording-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.listened-text,
+.recording-text {
+  display: none;
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.listened-info:hover .listened-text,
+.recording-info:hover .recording-text {
+  display: block;
 }
 
 /* Стили для Toolbar */
@@ -53,7 +141,36 @@
   margin-right: 24px;
 }
 
-/* Стили для модальных окон */
-.ant-modal-mask {
-  backdrop-filter: blur(2px);
+/* Пагинация */
+.calls-table-container .ant-pagination {
+  margin: 16px 0;
+  text-align: center;
+}
+
+/* Стили для иконок действий */
+.calls-table-container .ant-btn-text {
+  padding: 4px 8px;
+}
+
+.calls-table-container .ant-btn-text:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Стили для пустого состояния */
+.calls-table-container .ant-empty {
+  margin: 32px 0;
+}
+
+.participant-count-badge {
+  background-color: #ffd666;
+  color: #000;
+  padding: 0 8px;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 2px;
+  min-width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
 }

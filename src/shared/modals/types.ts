@@ -4,16 +4,16 @@ export interface ModalConfig {
   width?: number | string;
   maskClosable?: boolean;
   destroyOnClose?: boolean;
-  defaultParams?: Record<string, any>;
   closable?: boolean;
   title?: string;
 }
 
-export interface ModalComponent extends React.FC<any> {
+export interface ModalComponentType {
   modalConfig?: ModalConfig;
 }
 
 export interface ModalState {
-  isVisible: boolean;
+  isOpen: boolean;
+  key: string | null;
   params: Record<string, any>;
 }

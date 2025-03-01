@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useUnit } from 'effector-react';
-import { Table } from 'antd';
+import { message, Table } from 'antd';
 import type { TableProps } from 'antd';
 import {
   $callsTableState,
@@ -19,12 +19,15 @@ import getColumns from './CallsTableColumns';
 import { CallRecord } from '../../model/callsTable';
 import { mockCalls } from '../../../../api/mackCallsData.ts';
 import { isDevelopment } from '../../../../utils/environment.ts';
+import './styles/calls-table.css';
 
 const CallsTable: React.FC = () => {
   const { calls, isLoading, error, totalCalls, page, perPage } =
     useUnit($callsTableState);
   const listenedCalls = useUnit($listenedCalls);
   const listeningCall = useUnit($listeningCall);
+
+  const [messageApi, contextHolder] = message.useMessage();
 
   // Инициализация
   useEffect(() => {
@@ -38,23 +41,27 @@ const CallsTable: React.FC = () => {
     }
   }, []);
 
-  // Обработчики действий
-  const handleConnectCall = useCallback((call: CallRecord) => {
-    connectToCall({
-      id: call.id,
-      startTime: call.startTime,
-      participants: call.participants,
-      appealsId: call.appealsId,
-    });
-  }, []);
+  const handleConnectCall = useCallback(
+    (call: CallRecord) => {
+      connectToCall({
+        id: call.id,
+        startTime: call.startTime,
+        participants: call.participants,
+        appealsId: call.appealsId,
+      });
+      messageApi.success(`Подключение к звонку ${call.appealsId}`);
+    },
+    [messageApi]
+  );
 
   const handleCopyAppealsId = useCallback((appealsId: string) => {
     navigator.clipboard.writeText(appealsId);
+    messageApi.success('ID обращения скопирован в буфер обмена');
   }, []);
 
   const handleDownloadCallInfo = useCallback((callId: string) => {
     console.log('Скачивание информации о звонке:', callId);
-  }, []);
+  }, []); // 'этот хук не нужен в таблице он есть только в модальном окне при завершении прослушивания звонка
 
   const columns = getColumns({
     listeningCallId: listeningCall?.id || null,
@@ -80,6 +87,7 @@ const CallsTable: React.FC = () => {
 
   return (
     <div className='calls-table-container'>
+      {contextHolder}
       <Table<CallRecord>
         dataSource={calls}
         columns={columns}

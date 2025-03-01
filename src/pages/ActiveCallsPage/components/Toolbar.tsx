@@ -4,7 +4,7 @@ import { Button, Card, Divider, Space, Statistic, Typography } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import useModal from '../../../shared/modals/useModal.ts';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Toolbar = () => {
   const { totalCalls } = useUnit($callsTableState);
