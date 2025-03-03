@@ -1,0 +1,169 @@
+.listening-card-container {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.listening-card-player {
+  background-color: #8fb9e4;
+  width: 100%;
+  overflow: hidden;
+}
+
+.player-label {
+  background-color: #8fb9e4;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.listening-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background-color: #9bbce3;
+  position: relative;
+}
+
+.timer-container {
+  display: flex;
+  align-items: center;
+}
+
+.control-buttons-container {
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+}
+
+/* Timer Display Styles */
+.current-time {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 8px;
+}
+
+.recording-time-container {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 2px 8px;
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.recording-time {
+  font-size: 12px;
+  font-weight: normal;
+  color: #000;
+}
+
+/* Control Buttons Styles */
+.control-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.control-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  border: none !important;
+}
+
+.pause-btn {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.disconnect-btn {
+  background-color: #ff4d4f !important;
+  color: #fff !important;
+}
+
+.record-btn {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.add-control-btn {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.recording-indicator {
+  width: 32px;
+  height: 32px;
+  background-color: #52c41a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Пульсация для индикатора записи */
+.recording-indicator::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0.7);
+    opacity: 1;
+  }
+}
+
+.control-btn:hover, .control-btn:focus {
+  background-color: inherit !important;
+  color: inherit !important;
+  border: none !important;
+}
+
+.ant-btn-text:not(:disabled):active {
+  background-color: inherit !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .listening-card-content {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .control-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .recording-time-container {
+    position: static;
+    margin-top: 8px;
+    align-self: flex-end;
+  }
+}

@@ -1,5 +1,4 @@
-// src/pages/ActiveCallsPage/components/ListeningCard/index.tsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Card, Space, Typography, Badge } from 'antd';
 import { useUnit } from 'effector-react';
 import { $listeningCall } from '../../model.ts';
@@ -10,45 +9,56 @@ import {
 } from '../../hooks/useListeningCardHooks';
 import TimerDisplay from './TimerDisplay';
 import ControlButtons from './ControlButtons';
-import RuleModal from './modals/RuleModal.tsx';
-import DownloadModal from './modals/DownloadModal.tsx';
-import PhoneSelectModal from './modals/PhoneSelectModal.tsx';
+import './styles/listening-card.css';
+import {
+  $isPaused,
+  $listeningTime,
+  $recordingTime,
+} from '../../model/listeningСard.ts';
 
-const { Title } = Typography;
+const { Text } = Typography;
 
 const ListeningCard: React.FC = () => {
   const listeningCall = useUnit($listeningCall);
+  const listeningTime = useUnit($listeningTime);
+  const recordingTime = useUnit($recordingTime);
+  const isPaused = useUnit($isPaused);
 
-  // Используем кастомные хуки для управления таймерами
   useListeningTimer();
   useRecordingTimer();
   useInitializeListeningTime(listeningCall?.id || null);
 
   if (!listeningCall) return null;
 
-  return (
-    <>
-      <Card
-        title={
-          <Space>
-            <Title level={5}>Прослушиваемый звонок</Title>
-            {listeningCall.isRecording && (
-              <Badge status='processing' text='Запись' />
-            )}
-          </Space>
-        }
-      >
-        <Space direction='vertical' style={{ width: '100%' }}>
-          <TimerDisplay />
-          <ControlButtons />
-        </Space>
-      </Card>
+  useEffect(() => {
+    if (listeningCall) {
+      // Устанавливаем время начала прослушивания
+      updateListeningTimer(Date.now());
+    }
+  }, []);
 
-      {/* Модальные окна */}
-      <PhoneSelectModal />
-      <RuleModal />
-      <DownloadModal />
-    </>
+  return (
+      <div className="listening-card-container">
+        <div className="listening-card-player">
+          <div className="player-label">
+            {isPaused ? 'Звонок на паузе' : 'Идет звонок'}
+            {listeningCall.isRecording && ' (запись активна)'}
+          </div>
+          <div className="listening-card-content">
+            <div className="timer-container">
+              <Text className="current-time">{listeningTime}</Text>
+            </div>
+            <div className="control-buttons-container">
+              <ControlButtons />
+            </div>
+            {listeningCall.isRecording && (
+                <div className="recording-time-container">
+                  <Text className="recording-time">{recordingTime}</Text>
+                </div>
+            )}
+          </div>
+        </div>
+      </div>
   );
 };
 

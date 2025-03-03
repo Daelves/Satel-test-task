@@ -16,6 +16,23 @@
   border-right: 1px solid #b7eb8f !important;
 }
 
+/* Стили для раскрытой строки с панелью прослушивания */
+.ant-table-expanded-row {
+  background-color: #b7eb8f !important;
+  padding: 0 !important;
+}
+
+.ant-table-expanded-row > td {
+  padding: 0 !important;
+  border-bottom: 1px solid #b7eb8f !important;
+}
+
+/* Убираем границы у контейнера ListeningCard внутри раскрытой строки */
+.ant-table-expanded-row .listening-card-container {
+  margin-bottom: 0 !important;
+  border-radius: 0 !important;
+}
+
 /* Таблица активных звонков */
 .calls-table-container {
   margin: 16px 0;
@@ -59,20 +76,14 @@
   color: #1890ff;
 }
 
-.connect-icon {
-  font-size: 18px;
-  color: #52c41a;
+.connect-button {
+  background-color: #52c41a !important;
+  border-color: #52c41a !important;
 }
 
-.disconnect-icon {
-  font-size: 18px;
-  color: #fff;
-  background-color: #ff4d4f;
-  border-radius: 4px;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.disconnect-button {
+  background-color: #ff4d4f !important;
+  border-color: #ff4d4f !important;
 }
 
 .recording-icon {

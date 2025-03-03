@@ -157,7 +157,6 @@ export const getColumns = ({
                   type='text'
                   icon={<PhoneOutlined className='connect-icon' size={24} />}
                   onClick={() => onConnectCall(record)}
-
                 />
               </Tooltip>
             ) : (

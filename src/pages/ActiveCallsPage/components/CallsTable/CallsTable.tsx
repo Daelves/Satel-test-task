@@ -10,16 +10,15 @@ import {
   updateCallsList,
 } from '../../model/callsTable';
 import { $listenedCalls } from '../../model/callsTable';
-import {
-  $listeningCall,
-  connectToCall,
-  disconnectFromCall,
-} from '../../model/listeningCall';
+
 import getColumns from './CallsTableColumns';
 import { CallRecord } from '../../model/callsTable';
 import { mockCalls } from '../../../../api/mackCallsData.ts';
 import { isDevelopment } from '../../../../utils/environment.ts';
 import './styles/calls-table.css';
+import {$listeningCall, startListeningFx, stopListeningFx} from "../../model.ts";
+import ListeningCallCard from "../ListeningCallCard.tsx";
+import {disconnectFromCall} from "../../model/listeningCall.ts";
 
 const CallsTable: React.FC = () => {
   const { calls, isLoading, error, totalCalls, page, perPage } =
@@ -43,16 +42,18 @@ const CallsTable: React.FC = () => {
 
   const handleConnectCall = useCallback(
     (call: CallRecord) => {
-      connectToCall({
-        id: call.id,
-        startTime: call.startTime,
-        participants: call.participants,
-        appealsId: call.appealsId,
-      });
+      startListeningFx(call.id);
       messageApi.success(`Подключение к звонку ${call.appealsId}`);
     },
     [messageApi]
   );
+
+  const handleDisconnectCall = useCallback(() => {
+    if (listeningCall) {
+      stopListeningFx(listeningCall.id);
+      messageApi.success('Отключение от звонка');
+    }
+  }, [listeningCall, messageApi]);
 
   const handleCopyAppealsId = useCallback((appealsId: string) => {
     navigator.clipboard.writeText(appealsId);
@@ -61,13 +62,14 @@ const CallsTable: React.FC = () => {
 
   const handleDownloadCallInfo = useCallback((callId: string) => {
     console.log('Скачивание информации о звонке:', callId);
-  }, []); // 'этот хук не нужен в таблице он есть только в модальном окне при завершении прослушивания звонка
+  }, []);
 
   const columns = getColumns({
     listeningCallId: listeningCall?.id || null,
     listenedCalls,
     onConnectCall: handleConnectCall,
     onDisconnectCall: disconnectFromCall,
+    onCopyAppealsId: handleCopyAppealsId,
     onCopyAppealsId: handleCopyAppealsId,
     onDownloadCallInfo: handleDownloadCallInfo,
   });
@@ -85,32 +87,45 @@ const CallsTable: React.FC = () => {
     }
   };
 
+  const expandedRowKeys = listeningCall ? [listeningCall.id] : [];
+
   return (
-    <div className='calls-table-container'>
-      {contextHolder}
-      <Table<CallRecord>
-        dataSource={calls}
-        columns={columns}
-        rowKey='id'
-        loading={isLoading}
-        pagination={{
-          current: page,
-          pageSize: perPage,
-          total: totalCalls,
-          showSizeChanger: true,
-          pageSizeOptions: ['10', '20', '50'],
-          showTotal: (total) => `Всего ${total} записей`,
-        }}
-        onChange={handleTableChange}
-        rowClassName={(record) =>
-          listeningCall?.id === record.id ? 'active-listening-row' : ''
-        }
-        locale={{
-          emptyText: 'Нет активных звонков',
-        }}
-        scroll={{ x: 1000 }}
-      />
-    </div>
+      <div className='calls-table-container'>
+        {contextHolder}
+        <Table<CallRecord>
+            dataSource={calls}
+            columns={columns}
+            rowKey='id'
+            loading={isLoading}
+            pagination={{
+              current: page,
+              pageSize: perPage,
+              total: totalCalls,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '50'],
+              showTotal: (total) => `Всего ${total} записей`,
+            }}
+            onChange={handleTableChange}
+            rowClassName={(record) =>
+                listeningCall?.id === record.id ? 'active-listening-row' : ''
+            }
+            expandable={{
+              expandedRowKeys: expandedRowKeys,
+              expandRowByClick: false,
+              expandedRowRender: (record) => {
+                if (record.id === listeningCall?.id) {
+                  return <ListeningCallCard/>;
+                }
+                return null;
+              },
+              rowExpandable: (record) => record.id === listeningCall?.id,
+            }}
+            locale={{
+              emptyText: 'Нет активных звонков',
+            }}
+            scroll={{x: 1000}}
+        />
+      </div>
   );
 };
 
