@@ -4,6 +4,7 @@ import CallsTable from './components/CallsTable/CallsTable.tsx';
 import { useEffect } from 'react';
 import { createWebSocketConnection } from '../../api/websocket.ts';
 import { updateCallsList } from './model/callsTable.ts';
+import ListeningCallCard from './components/ListeningCallCard.tsx';
 
 const ActiveCallsPage = () => {
   useEffect(() => {

@@ -12,19 +12,15 @@ const TimerDisplay: React.FC = () => {
   const recordingTime = useUnit($recordingTime);
 
   return (
-    <Space style={{ width: '100%', justifyContent: 'center' }}>
-      <div>
-        <Text>Длительность прослушивания: </Text>
-        <Text strong>{listeningTime}</Text>
-      </div>
+    <div className='timer-display'>
+      <Text className='current-time'>18:36</Text>
 
       {listeningCall?.isRecording && (
-        <div>
-          <Text>Длительность записи: </Text>
-          <Text strong>{recordingTime}</Text>
+        <div className='recording-time-container'>
+          <Text className='recording-time'>00:22</Text>
         </div>
       )}
-    </Space>
+    </div>
   );
 };
 
