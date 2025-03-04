@@ -10,6 +10,30 @@ import {
   $isPaused,
   $isRecording
 } from '../model/listeningСard.ts';
+import { $listeningCall } from '../model.ts';
+import { formatTime } from '../../../utils/formatters.ts';
+
+/**
+ * Хук для расчета времени с начала звонка
+ */
+export const useCallDuration = () => {
+  const listeningCall = useUnit($listeningCall);
+
+  useEffect(() => {
+    if (listeningCall) {
+      // Получаем время начала звонка
+      const callStartTime = new Date(listeningCall.callsStartTime).getTime();
+      const currentTime = Date.now();
+      const callDuration = currentTime - callStartTime;
+
+      // Формируем строку длительности звонка с начала звонка
+      const formattedDuration = formatTime(callDuration);
+
+      // Обновляем модель с реальной длительностью звонка
+      updateTime({ callDuration: formattedDuration });
+    }
+  }, [listeningCall]);
+};
 
 /**
  * Хук для управления таймером прослушивания
@@ -19,6 +43,7 @@ export const useListeningTimer = () => {
   const timerRef = useRef<number | null>(null);
   const state = useUnit($listeningCardState);
   const isPaused = useUnit($isPaused);
+  const listeningCall = useUnit($listeningCall);
 
   useEffect(() => {
     // Запускаем таймер только если есть время начала прослушивания и звонок не на паузе
@@ -32,11 +57,29 @@ export const useListeningTimer = () => {
 
     // Запускаем интервал обновления времени прослушивания
     timerRef.current = window.setInterval(() => {
-      updateTime();
+      if (listeningCall) {
+        // Рассчитываем длительность звонка с момента его начала
+        const callStartTime = new Date(listeningCall.callsStartTime).getTime();
+        const currentTime = Date.now();
+        const callDuration = currentTime - callStartTime;
+
+        // Обновляем с актуальной длительностью
+        updateTime({ callDuration: formatTime(callDuration) });
+      } else {
+        // Обычное обновление времени прослушивания
+        updateTime();
+      }
     }, 1000);
 
     // Сразу вызываем обновление при установке таймера
-    updateTime();
+    if (listeningCall) {
+      const callStartTime = new Date(listeningCall.callsStartTime).getTime();
+      const currentTime = Date.now();
+      const callDuration = currentTime - callStartTime;
+      updateTime({ callDuration: formatTime(callDuration) });
+    } else {
+      updateTime();
+    }
 
     return () => {
       if (timerRef.current) {
@@ -46,7 +89,8 @@ export const useListeningTimer = () => {
     };
   }, [
     state.listeningStartTime,
-    isPaused
+    isPaused,
+    listeningCall
   ]);
 
   // Очистка при размонтировании
@@ -114,13 +158,22 @@ export const useRecordingTimer = () => {
  */
 export const useInitializeListeningTime = (callId: string | null) => {
   const state = useUnit($listeningCardState);
+  const listeningCall = useUnit($listeningCall);
 
   useEffect(() => {
     if (callId && !state.listeningStartTime && !state.isPaused) {
       // Инициализируем время прослушивания
       updateTime({ initListeningTime: true });
+
+      // Также инициализируем длительность звонка
+      if (listeningCall) {
+        const callStartTime = new Date(listeningCall.callsStartTime).getTime();
+        const currentTime = Date.now();
+        const callDuration = currentTime - callStartTime;
+        updateTime({ callDuration: formatTime(callDuration) });
+      }
     }
-  }, [callId, state.listeningStartTime, state.isPaused]);
+  }, [callId, state.listeningStartTime, state.isPaused, listeningCall]);
 };
 
 /**

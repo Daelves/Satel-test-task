@@ -1,5 +1,12 @@
-.listening-card-container {
+.listening-card-wrapper {
+  display: flex;
+  justify-content: center;
   width: 100%;
+}
+
+.listening-card-container {
+  width: 80%;
+  max-width: 500px;
   margin-bottom: 0;
 }
 
@@ -7,6 +14,7 @@
   background-color: #8fb9e4;
   width: 100%;
   overflow: hidden;
+  border-radius: 4px;
 }
 
 .player-label {
@@ -22,7 +30,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 8px;
-  background-color: #9bbce3;
+  background-color: #8fb9e4;
   position: relative;
 }
 
@@ -150,6 +158,10 @@
 
 /* Responsive adjustments */
 @media (max-width: 576px) {
+  .listening-card-container {
+    width: 95%;
+  }
+
   .listening-card-content {
     flex-direction: column;
     gap: 8px;
