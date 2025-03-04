@@ -1,4 +1,3 @@
-// src/pages/ActiveCallsPage/model.ts
 import { createDomain, sample } from 'effector';
 import { Call, ListeningCall } from './types.ts';
 import { mockCallsService } from '../../services/mockService.ts';
@@ -17,14 +16,29 @@ export const fetchCallsFx = callsDomain.createEffect(async () => {
 // События для управления прослушиванием
 export const startListeningFx = listeningDomain.createEffect(
     async (callId: string) => {
-        return await mockCallsService.startListening(callId);
+        console.log('Запуск startListeningFx с ID:', callId);
+        try {
+            const result = await mockCallsService.startListening(callId);
+            console.log('startListeningFx успешно выполнен:', result);
+            return result;
+        } catch (error) {
+            console.error('Ошибка в startListeningFx:', error);
+            throw error;
+        }
     }
 );
 
 export const stopListeningFx = listeningDomain.createEffect(
     async (callId: string) => {
-        await mockCallsService.stopListening(callId);
-        return null;
+        console.log('Запуск stopListeningFx с ID:', callId);
+        try {
+            const result = await mockCallsService.stopListening(callId);
+            console.log('stopListeningFx успешно выполнен:', result);
+            return result;
+        } catch (error) {
+            console.error('Ошибка в stopListeningFx:', error);
+            throw error;
+        }
     }
 );
 
@@ -44,6 +58,19 @@ export const $listeningCall = listeningDomain
 export const $filters = filtersDomain
     .createStore({})
     .on(setFilters, (_, payload) => payload);
+
+// Добавляем логирование для отслеживания событий
+startListeningFx.doneData.watch((payload) => {
+    console.log('startListeningFx.doneData сработал с:', payload);
+});
+
+startListeningFx.failData.watch((error) => {
+    console.error('startListeningFx.failData сработал с ошибкой:', error);
+});
+
+$listeningCall.watch((state) => {
+    console.log('$listeningCall обновился:', state);
+});
 
 // Связь между событиями: успешное начало прослушивания вызывает connectToCall
 sample({

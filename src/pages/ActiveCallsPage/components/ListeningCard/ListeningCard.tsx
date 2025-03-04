@@ -15,6 +15,7 @@ import {
   $listeningTime,
   $recordingTime,
 } from '../../model/listeningСard.ts';
+import {updateTime} from "../../model/listeningCall.ts";
 
 const { Text } = Typography;
 
@@ -28,34 +29,38 @@ const ListeningCard: React.FC = () => {
   useRecordingTimer();
   useInitializeListeningTime(listeningCall?.id || null);
 
-  if (!listeningCall) return null;
-
+  // Исправляем: вместо неопределенной функции updateListeningTimer
+  // используем функцию updateTime из модели
   useEffect(() => {
     if (listeningCall) {
-      // Устанавливаем время начала прослушивания
-      updateListeningTimer(Date.now());
+      // Инициализируем время начала прослушивания
+      updateTime({ initListeningTime: true });
     }
-  }, []);
+  }, [listeningCall]);
+
+  if (!listeningCall) return null;
 
   return (
-      <div className="listening-card-container">
-        <div className="listening-card-player">
-          <div className="player-label">
-            {isPaused ? 'Звонок на паузе' : 'Идет звонок'}
-            {listeningCall.isRecording && ' (запись активна)'}
-          </div>
-          <div className="listening-card-content">
-            <div className="timer-container">
-              <Text className="current-time">{listeningTime}</Text>
+      <div className="listening-card-wrapper">
+        <div className="listening-card-container">
+          <div className="listening-card-player">
+            <div className="player-label">
+              {isPaused ? 'Звонок на паузе' : 'Идет звонок'}
+              {listeningCall.isRecording}
             </div>
-            <div className="control-buttons-container">
-              <ControlButtons />
+            <div className="listening-card-content">
+              <div className="timer-container">
+                <Text className="current-time">{listeningTime}</Text>
+              </div>
+              <div className="control-buttons-container">
+                <ControlButtons />
+              </div>
+              {listeningCall.isRecording && (
+                  <div className="recording-time-container">
+                    <Text className="recording-time">{recordingTime}</Text>
+                  </div>
+              )}
             </div>
-            {listeningCall.isRecording && (
-                <div className="recording-time-container">
-                  <Text className="recording-time">{recordingTime}</Text>
-                </div>
-            )}
           </div>
         </div>
       </div>
