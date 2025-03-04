@@ -77,7 +77,7 @@ sample({
   source: startListeningFx.doneData,
   fn: (call) => ({
     id: call.id,
-    startTime: new Date(call.callsStartTime),
+    startTime: call.callsStartTime,
     participants: call.phoneNumbers,
     appealsId: call.appealsId,
   }),
