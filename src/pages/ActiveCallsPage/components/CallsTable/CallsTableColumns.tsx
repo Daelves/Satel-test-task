@@ -132,13 +132,9 @@ export const getColumns = ({
                     minute: '2-digit',
                     second: '2-digit',
                 }),
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             sorter: (a, b) =>
                 new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
-            className: 'time-column',
-            onCell: () => ({
-                className: 'time-column',
-            }),
         },
         {
             title: 'Участники',

@@ -116,15 +116,21 @@ const CallsTable: React.FC = () => {
                     listeningCall?.id === record.id ? 'active-listening-row' : ''
                 }
                 expandable={{
-                    expandedRowKeys: expandedRowKeys,
-                    expandRowByClick: false,
+                    // Автоматически раскрываем строку с прослушиваемым звонком
+                    expandedRowKeys: listeningCall ? [listeningCall.id] : [],
+                    // Важно: убираем expandIcon, чтобы не показывать кнопку "-"
+                    expandIcon: () => null,
+                    rowExpandable: (record) => record.id === listeningCall?.id,
                     expandedRowRender: (record) => {
                         if (record.id === listeningCall?.id) {
-                            return <ListeningCallCard />;
+                            return (
+                                <div className="integrated-listening-card">
+                                    <ListeningCallCard />
+                                </div>
+                            );
                         }
                         return null;
-                    },
-                    rowExpandable: (record) => record.id === listeningCall?.id,
+                    }
                 }}
                 locale={{
                     emptyText: 'Нет активных звонков',
