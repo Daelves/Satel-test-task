@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { createWebSocketConnection } from '../../api/websocket.ts';
 import { updateCallsList } from './model/callsTable.ts';
 import ListeningCallCard from './components/ListeningCallCard.tsx';
-import {useUnit} from "effector-react";
-import {$listeningCall} from "./model.ts";
+import { useUnit } from 'effector-react';
+import { $listeningCall } from './model.ts';
 
 const ActiveCallsPage = () => {
-    const listeningCall = useUnit($listeningCall);
+  const listeningCall = useUnit($listeningCall);
   useEffect(() => {
     const wsConnection = createWebSocketConnection();
 

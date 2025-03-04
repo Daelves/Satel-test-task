@@ -146,7 +146,8 @@
   }
 }
 
-.control-btn:hover, .control-btn:focus {
+.control-btn:hover,
+.control-btn:focus {
   background-color: inherit !important;
   color: inherit !important;
   border: none !important;

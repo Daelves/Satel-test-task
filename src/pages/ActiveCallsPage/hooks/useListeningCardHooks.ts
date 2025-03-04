@@ -1,17 +1,17 @@
 // src/pages/ActiveCallsPage/hooks/useListeningCardHooks.ts
 import { useEffect, useRef } from 'react';
 import { useUnit } from 'effector-react';
-import {
-  $listeningCardState,
-  updateTime,
-  updateDownloadProgress,
-  closeDownloadModal,
-  $downloadModalVisible,
-  $isPaused,
-  $isRecording
-} from '../model/listeningСard.ts';
+
 import { $listeningCall } from '../model.ts';
 import { formatTime } from '../../../utils/formatters.ts';
+import {
+  $downloadModalVisible,
+  $isPaused,
+  $isRecording,
+  $listeningCallState, closeDownloadModal,
+  updateDownloadProgress,
+  updateTime
+} from "../model/listeningCall.ts";
 
 /**
  * Хук для расчета времени с начала звонка
@@ -41,7 +41,7 @@ export const useCallDuration = () => {
  */
 export const useListeningTimer = () => {
   const timerRef = useRef<number | null>(null);
-  const state = useUnit($listeningCardState);
+  const state = useUnit($listeningCallState);
   const isPaused = useUnit($isPaused);
   const listeningCall = useUnit($listeningCall);
 
@@ -87,11 +87,7 @@ export const useListeningTimer = () => {
         timerRef.current = null;
       }
     };
-  }, [
-    state.listeningStartTime,
-    isPaused,
-    listeningCall
-  ]);
+  }, [state.listeningStartTime, isPaused, listeningCall]);
 
   // Очистка при размонтировании
   useEffect(() => {
@@ -110,7 +106,7 @@ export const useListeningTimer = () => {
  */
 export const useRecordingTimer = () => {
   const timerRef = useRef<number | null>(null);
-  const state = useUnit($listeningCardState);
+  const state = useUnit($listeningCallState);
   const isRecording = useUnit($isRecording);
 
   useEffect(() => {
@@ -137,10 +133,7 @@ export const useRecordingTimer = () => {
         timerRef.current = null;
       }
     };
-  }, [
-    state.recordingStartTime,
-    isRecording
-  ]);
+  }, [state.recordingStartTime, isRecording]);
 
   // Очистка при размонтировании
   useEffect(() => {
@@ -157,7 +150,7 @@ export const useRecordingTimer = () => {
  * Хук для инициализации начального времени прослушивания
  */
 export const useInitializeListeningTime = (callId: string | null) => {
-  const state = useUnit($listeningCardState);
+  const state = useUnit($listeningCallState);
   const listeningCall = useUnit($listeningCall);
 
   useEffect(() => {

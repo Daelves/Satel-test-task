@@ -16,12 +16,16 @@ import { CallRecord } from '../../model/callsTable';
 import { mockCalls } from '../../../../api/mackCallsData.ts';
 import { isDevelopment } from '../../../../utils/environment.ts';
 import './styles/calls-table.css';
-import { $listeningCall, startListeningFx, stopListeningFx } from "../../model.ts";
-import ListeningCallCard from "../ListeningCallCard.tsx";
+import {
+  $listeningCall,
+  startListeningFx,
+  stopListeningFx,
+} from '../../model.ts';
+import ListeningCallCard from '../ListeningCallCard.tsx';
 
 const CallsTable: React.FC = () => {
   const { calls, isLoading, error, totalCalls, page, perPage } =
-      useUnit($callsTableState);
+    useUnit($callsTableState);
   const listenedCalls = useUnit($listenedCalls);
   const listeningCall = useUnit($listeningCall);
 
@@ -40,11 +44,11 @@ const CallsTable: React.FC = () => {
   }, []);
 
   const handleConnectCall = useCallback(
-      (call: CallRecord) => {
-        startListeningFx(call.id);
-        messageApi.success(`Подключение к звонку ${call.appealsId}`);
-      },
-      [messageApi]
+    (call: CallRecord) => {
+      startListeningFx(call.id);
+      messageApi.success(`Подключение к звонку ${call.appealsId}`);
+    },
+    [messageApi]
   );
 
   const handleDisconnectCall = useCallback(() => {
@@ -54,10 +58,13 @@ const CallsTable: React.FC = () => {
     }
   }, [listeningCall, messageApi]);
 
-  const handleCopyAppealsId = useCallback((appealsId: string) => {
-    navigator.clipboard.writeText(appealsId);
-    messageApi.success('ID обращения скопирован в буфер обмена');
-  }, [messageApi]);
+  const handleCopyAppealsId = useCallback(
+    (appealsId: string) => {
+      navigator.clipboard.writeText(appealsId);
+      messageApi.success('ID обращения скопирован в буфер обмена');
+    },
+    [messageApi]
+  );
 
   const handleDownloadCallInfo = useCallback((callId: string) => {
     console.log('Скачивание информации о звонке:', callId);
@@ -73,9 +80,9 @@ const CallsTable: React.FC = () => {
   });
 
   const handleTableChange: TableProps<CallRecord>['onChange'] = (
-      pagination,
-      filters,
-      sorter
+    pagination,
+    filters,
+    sorter
   ) => {
     if (pagination.current) {
       changePage(pagination.current);
@@ -97,46 +104,46 @@ const CallsTable: React.FC = () => {
   }, [listeningCall, expandedRowKeys]);
 
   return (
-      <div className='calls-table-container'>
-        {contextHolder}
-        <Table<CallRecord>
-            dataSource={calls}
-            columns={columns}
-            rowKey='id'
-            loading={isLoading}
-            pagination={{
-              current: page,
-              pageSize: perPage,
-              total: totalCalls,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50'],
-              showTotal: (total) => `Всего ${total} записей`,
-            }}
-            onChange={handleTableChange}
-            rowClassName={(record) =>
-                listeningCall?.id === record.id ? 'active-listening-row' : ''
-            }
-            expandable={{
-              expandedRowKeys: expandedRowKeys,
-              expandRowByClick: false,
-              expandedRowRender: (record) => {
-                // Добавляем лог для отладки
-                console.log('Рендеринг expanded row для записи:', record.id);
-                console.log('Текущий прослушиваемый звонок:', listeningCall?.id);
+    <div className='calls-table-container'>
+      {contextHolder}
+      <Table<CallRecord>
+        dataSource={calls}
+        columns={columns}
+        rowKey='id'
+        loading={isLoading}
+        pagination={{
+          current: page,
+          pageSize: perPage,
+          total: totalCalls,
+          showSizeChanger: true,
+          pageSizeOptions: ['10', '20', '50'],
+          showTotal: (total) => `Всего ${total} записей`,
+        }}
+        onChange={handleTableChange}
+        rowClassName={(record) =>
+          listeningCall?.id === record.id ? 'active-listening-row' : ''
+        }
+        expandable={{
+          expandedRowKeys: expandedRowKeys,
+          expandRowByClick: false,
+          expandedRowRender: (record) => {
+            // Добавляем лог для отладки
+            console.log('Рендеринг expanded row для записи:', record.id);
+            console.log('Текущий прослушиваемый звонок:', listeningCall?.id);
 
-                if (record.id === listeningCall?.id) {
-                  return <ListeningCallCard />;
-                }
-                return null;
-              },
-              rowExpandable: (record) => record.id === listeningCall?.id,
-            }}
-            locale={{
-              emptyText: 'Нет активных звонков',
-            }}
-            scroll={{ x: 1000 }}
-        />
-      </div>
+            if (record.id === listeningCall?.id) {
+              return <ListeningCallCard />;
+            }
+            return null;
+          },
+          rowExpandable: (record) => record.id === listeningCall?.id,
+        }}
+        locale={{
+          emptyText: 'Нет активных звонков',
+        }}
+        scroll={{ x: 1000 }}
+      />
+    </div>
   );
 };
 

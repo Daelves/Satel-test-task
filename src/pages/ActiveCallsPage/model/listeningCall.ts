@@ -1,169 +1,164 @@
-import {createDomain, createEvent} from 'effector';
+import { createDomain, createEvent, createEffect } from 'effector';
 import { formatTime } from '../../../utils/formatters';
 
-const listeningCardDomain = createDomain('listeningCard');
+const listeningCallDomain = createDomain('listeningCall');
 
-export interface ListeningCardState {
-  isPaused: boolean;
-  listeningStartTime: number | null;
-  pausedAtTime: number | null;
-  isRecording: boolean;
-  recordingStartTime: number | null;
-  listeningTimeDisplay: string;
-  recordingTimeDisplay: string;
-  isDownloadModalVisible: boolean;
-  downloadProgress: number;
+export interface ListeningCallState {
+    isPaused: boolean;
+    listeningStartTime: number | null;
+    pausedAtTime: number | null;
+    isRecording: boolean;
+    recordingStartTime: number | null;
+    callDuration: string; // Реальная длительность звонка
+    recordingTimeDisplay: string;
+    isDownloadModalVisible: boolean;
+    downloadProgress: number;
 }
 
-type UpdateTimeParams = {
-  initListeningTime?: boolean;
+export type UpdateTimeParams = {
+    initListeningTime?: boolean;
+    callDuration?: string;
 };
 
-export const togglePause = listeningCardDomain.createEvent();
-export const resetListening = listeningCardDomain.createEvent();
-export const updateTime = listeningCardDomain.createEvent<UpdateTimeParams | void>();
+// События для управления состоянием прослушивания
+export const togglePause = listeningCallDomain.createEvent();
+export const resetListening = listeningCallDomain.createEvent();
+export const updateTime = listeningCallDomain.createEvent<UpdateTimeParams | void>();
 
-export const startRecordingFx = listeningCardDomain.createEffect(
-    async (callId: string) => {
-      // В реальном приложении здесь будет вызов API
-      console.log(`Starting recording for call ${callId}`);
-      return true;
-    }
-);
-
-export const stopRecordingFx = listeningCardDomain.createEffect(
-    async (callId: string) => {
-      // В реальном приложении здесь будет вызов API
-      console.log(`Stopping recording for call ${callId}`);
-      return false;
-    }
-);
-
-export const updateDownloadProgress = listeningCardDomain.createEvent<number>();
-export const closeDownloadModal = listeningCardDomain.createEvent();
-
-export const $listeningCardState = listeningCardDomain.createStore<ListeningCardState>({
-  isPaused: false,
-  listeningStartTime: null,
-  pausedAtTime: null,
-  isRecording: false,
-  recordingStartTime: null,
-  listeningTimeDisplay: '00:00',
-  recordingTimeDisplay: '00:00',
-  isDownloadModalVisible: false,
-  downloadProgress: 0,
-});
-
-$listeningCardState
-    .on(togglePause, (state) => {
-      const now = Date.now();
-
-      if (state.isPaused) {
-        const timeOnPause = now - (state.pausedAtTime || now);
-        const newStartTime = state.listeningStartTime
-            ? state.listeningStartTime + timeOnPause
-            : now;
-
-        return {
-          ...state,
-          isPaused: false,
-          listeningStartTime: newStartTime,
-          pausedAtTime: null
-        };
-      } else {
-        return {
-          ...state,
-          isPaused: true,
-          pausedAtTime: now
-        };
-      }
-    })
-
-     .on(updateTime, (state, params = {}) => {
-      const now = Date.now();
-      const { initListeningTime } = params as UpdateTimeParams;
-
-      if (initListeningTime) {
-        return {
-          ...state,
-          listeningStartTime: now,
-          listeningTimeDisplay: '00:00',
-          isPaused: false
-        };
-      }
-
-      let listeningTimeDisplay = state.listeningTimeDisplay;
-      let recordingTimeDisplay = state.recordingTimeDisplay;
-
-      if (state.listeningStartTime && !state.isPaused) {
-        const elapsed = now - state.listeningStartTime;
-        listeningTimeDisplay = formatTime(elapsed);
-      }
-
-      if (state.isRecording && state.recordingStartTime) {
-        const elapsed = now - state.recordingStartTime;
-        recordingTimeDisplay = formatTime(elapsed);
-      }
-
-      return {
-        ...state,
-        listeningTimeDisplay,
-        recordingTimeDisplay
-      };
-    })
-
-    .on(startRecordingFx.doneData, (state) => {
-      return {
-        ...state,
-        isRecording: true,
-        recordingStartTime: Date.now(),
-        recordingTimeDisplay: '00:00'
-      };
-    })
-
-    .on(stopRecordingFx.doneData, (state) => {
-      return {
-        ...state,
-        isRecording: false,
-        recordingStartTime: null,
-        isDownloadModalVisible: true,
-        downloadProgress: 0
-      };
-    })
-
-    .on(updateDownloadProgress, (state, progress) => {
-      return {
-        ...state,
-        downloadProgress: progress
-      };
-    })
-
-    // Закрытие модального окна загрузки
-    .on(closeDownloadModal, (state) => {
-      return {
-        ...state,
-        isDownloadModalVisible: false,
-        downloadProgress: 0
-      };
-    })
-
-    // Сброс состояния прослушивания
-    .reset(resetListening);
-
-
+// События соединения и отключения от звонка
 export const connectToCall = createEvent<{
-  id: string;
-  startTime: Date;
-  participants: string[];
-  appealsId: string;
+    id: string;
+    startTime: Date;
+    participants: string[];
+    appealsId: string;
 }>();
 
 export const disconnectFromCall = createEvent<void>();
 
-// Селекторы для доступа к конкретным данным из компонентов
-export const $isPaused = $listeningCardState.map(state => state.isPaused);
-export const $isRecording = $listeningCardState.map(state => state.isRecording);
-export const $listeningTime = $listeningCardState.map(state => state.listeningTimeDisplay);
-export const $recordingTime = $listeningCardState.map(state => state.recordingTimeDisplay);
-export const $downloadModalVisible = $listeningCardState.map(state => state.isDownloadModalVisible);
-export const $downloadProgress = $listeningCardState.map(state => state.downloadProgress);
+// Эффекты для записи
+export const startRecordingFx = listeningCallDomain.createEffect(
+    async (callId: string) => {
+        console.log(`Starting recording for call ${callId}`);
+        return true;
+    }
+);
+
+export const stopRecordingFx = listeningCallDomain.createEffect(
+    async (callId: string) => {
+        console.log(`Stopping recording for call ${callId}`);
+        return false;
+    }
+);
+
+// События обновления прогресса загрузки
+export const updateDownloadProgress = listeningCallDomain.createEvent<number>();
+export const closeDownloadModal = listeningCallDomain.createEvent();
+
+// Стор с состоянием прослушивания
+export const $listeningCallState = listeningCallDomain.createStore<ListeningCallState>({
+    isPaused: false,
+    listeningStartTime: null,
+    pausedAtTime: null,
+    isRecording: false,
+    recordingStartTime: null,
+    callDuration: '00:00',
+    recordingTimeDisplay: '00:00',
+    isDownloadModalVisible: false,
+    downloadProgress: 0,
+});
+
+// Добавляем обработчики событий
+$listeningCallState
+    .on(togglePause, (state) => {
+        const now = Date.now();
+
+        if (state.isPaused) {
+            const timeOnPause = now - (state.pausedAtTime || now);
+            const newStartTime = state.listeningStartTime
+                ? state.listeningStartTime + timeOnPause
+                : now;
+
+            return {
+                ...state,
+                isPaused: false,
+                listeningStartTime: newStartTime,
+                pausedAtTime: null,
+            };
+        } else {
+            return {
+                ...state,
+                isPaused: true,
+                pausedAtTime: now,
+            };
+        }
+    })
+    .on(updateTime, (state, params = {}) => {
+        const now = Date.now();
+        const { initListeningTime, callDuration } = params as UpdateTimeParams;
+
+        if (callDuration) {
+            return {
+                ...state,
+                callDuration,
+            };
+        }
+
+        if (initListeningTime) {
+            return {
+                ...state,
+                listeningStartTime: now,
+                isPaused: false
+            };
+        }
+
+        let recordingTimeDisplay = state.recordingTimeDisplay;
+
+        if (state.isRecording && state.recordingStartTime) {
+            const elapsed = now - state.recordingStartTime;
+            recordingTimeDisplay = formatTime(elapsed);
+        }
+
+        return {
+            ...state,
+            recordingTimeDisplay,
+        };
+    })
+    .on(startRecordingFx.doneData, (state) => {
+        return {
+            ...state,
+            isRecording: true,
+            recordingStartTime: Date.now(),
+            recordingTimeDisplay: '00:00',
+        };
+    })
+    .on(stopRecordingFx.doneData, (state) => {
+        return {
+            ...state,
+            isRecording: false,
+            recordingStartTime: null,
+            isDownloadModalVisible: true,
+            downloadProgress: 0,
+        };
+    })
+    .on(updateDownloadProgress, (state, progress) => {
+        return {
+            ...state,
+            downloadProgress: progress,
+        };
+    })
+    .on(closeDownloadModal, (state) => {
+        return {
+            ...state,
+            isDownloadModalVisible: false,
+            downloadProgress: 0,
+        };
+    })
+    .reset(resetListening);
+
+// Селекторы для удобного доступа к данным из компонентов
+export const $isPaused = $listeningCallState.map((state) => state.isPaused);
+export const $isRecording = $listeningCallState.map((state) => state.isRecording);
+export const $callDuration = $listeningCallState.map((state) => state.callDuration);
+export const $recordingTime = $listeningCallState.map((state) => state.recordingTimeDisplay);
+export const $downloadModalVisible = $listeningCallState.map((state) => state.isDownloadModalVisible);
+export const $downloadProgress = $listeningCallState.map((state) => state.downloadProgress);
