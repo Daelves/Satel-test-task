@@ -8,15 +8,10 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useUnit } from 'effector-react';
-import {
-  $isPaused,
-  $isRecording,
-  togglePause,
-  startRecordingFx,
-  stopRecordingFx,
-} from '../../model/listeningСard.ts';
+
 import { $listeningCall, stopListeningFx } from '../../model';
 import useModal from '../../../../shared/modals/useModal.ts';
+import {$isPaused, $isRecording, startRecordingFx, stopRecordingFx, togglePause} from "../../model/listeningCall.ts";
 
 const ControlButtons: React.FC = () => {
   const isPaused = useUnit($isPaused);
@@ -24,7 +19,7 @@ const ControlButtons: React.FC = () => {
   const listeningCall = useUnit($listeningCall);
 
   const { open: openPhoneSelectModal } = useModal('phoneSelect');
-  const { open: openDownloadModal } = useModal('download');
+
 
   if (!listeningCall) return null;
 
@@ -72,52 +67,51 @@ const ControlButtons: React.FC = () => {
   };
 
   return (
-      <div className="control-buttons">
-        <Tooltip title={isPaused ? 'Продолжить прослушивание' : 'Поставить на паузу'}>
+    <div className='control-buttons'>
+      <Tooltip
+        title={isPaused ? 'Продолжить прослушивание' : 'Поставить на паузу'}
+      >
+        <Button
+          type='text'
+          className='control-btn pause-btn'
+          icon={isPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
+          onClick={handlePauseResume}
+        />
+      </Tooltip>
+
+      <Tooltip title='Отключиться от звонка'>
+        <Button
+          type='text'
+          className='control-btn disconnect-btn'
+          icon={<PhoneOutlined />}
+          onClick={handleDisconnect}
+        />
+      </Tooltip>
+
+      <Tooltip title='Добавить на контроль'>
+        <Button
+          type='text'
+          className='control-btn add-control-btn'
+          icon={<PlusOutlined />}
+          onClick={handleAddToControlClick}
+        />
+      </Tooltip>
+
+      {!isRecording ? (
+        <Tooltip title='Начать запись звонка'>
           <Button
-              type="text"
-              className="control-btn pause-btn"
-              icon={isPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
-              onClick={handlePauseResume}
+            type='text'
+            className='control-btn record-btn'
+            icon={<AudioOutlined />}
+            onClick={handleRecordStart}
           />
         </Tooltip>
-
-        <Tooltip title="Отключиться от звонка">
-          <Button
-              type="text"
-              className="control-btn disconnect-btn"
-              icon={<PhoneOutlined />}
-              onClick={handleDisconnect}
-          />
+      ) : (
+        <Tooltip title='Остановить запись'>
+          <div className='recording-indicator' onClick={handleRecordStop} />
         </Tooltip>
-
-        <Tooltip title="Добавить на контроль">
-          <Button
-              type="text"
-              className="control-btn add-control-btn"
-              icon={<PlusOutlined />}
-              onClick={handleAddToControlClick}
-          />
-        </Tooltip>
-
-        {!isRecording ? (
-            <Tooltip title="Начать запись звонка">
-              <Button
-                  type="text"
-                  className="control-btn record-btn"
-                  icon={<AudioOutlined />}
-                  onClick={handleRecordStart}
-              />
-            </Tooltip>
-        ) : (
-            <Tooltip title="Остановить запись">
-              <div
-                  className="recording-indicator"
-                  onClick={handleRecordStop}
-              />
-            </Tooltip>
-        )}
-      </div>
+      )}
+    </div>
   );
 };
 
