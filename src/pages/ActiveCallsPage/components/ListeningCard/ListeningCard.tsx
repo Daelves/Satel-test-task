@@ -9,7 +9,7 @@ import {
   $callDuration, $isPaused,
   $isRecording, $recordingTime,
 } from '../../model/listeningCall.ts';
-import {useCallDuration} from "../../hooks/useCallDuration.ts";
+import { useCallDuration } from '../../hooks/useCallDuration.ts';
 
 const { Text } = Typography;
 
