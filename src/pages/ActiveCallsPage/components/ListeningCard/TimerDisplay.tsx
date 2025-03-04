@@ -1,8 +1,8 @@
 import React from 'react';
-import { Space, Typography } from 'antd';
+import { Typography } from 'antd';
 import { useUnit } from 'effector-react';
-import { $listeningTime, $recordingTime } from '../../model/listeningСard.ts';
-import { $listeningCall } from '../../model.ts';
+import {$recordingTime} from "../../model/listeningCall.ts";
+
 
 const { Text } = Typography;
 

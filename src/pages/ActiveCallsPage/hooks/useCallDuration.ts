@@ -15,8 +15,13 @@ export const useCallDuration = () => {
 
       const callStartTime = new Date(listeningCall.callsStartTime).getTime();
       const currentTime = Date.now();
-      const callDuration = currentTime - callStartTime;
-      const formattedDuration = formatTime(callDuration);
+      const elapsedMilliseconds = currentTime - callStartTime;
+      const formattedDuration = formatTime(elapsedMilliseconds);
+
+      console.log('Call started at:', new Date(callStartTime).toLocaleTimeString());
+      // console.log('Current time:', new Date(currentTime).toLocaleTimeString());
+      // console.log('Elapsed milliseconds:', elapsedMilliseconds);
+      // console.log('Formatted duration:', formattedDuration);
 
       updateTime({ callDuration: formattedDuration });
     };

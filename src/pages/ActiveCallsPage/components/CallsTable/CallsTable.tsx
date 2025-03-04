@@ -42,7 +42,7 @@ const CallsTable: React.FC = () => {
       fetchCallsRequested();
     }
   }, []);
-
+console.log(calls)
   const handleConnectCall = useCallback(
     (call: CallRecord) => {
       startListeningFx(call.id);
