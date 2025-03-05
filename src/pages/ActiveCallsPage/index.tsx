@@ -7,7 +7,7 @@ import { updateCallsList } from './model/callsTable.ts';
 import ListeningCallCard from './components/ListeningCallCard.tsx';
 import { useUnit } from 'effector-react';
 import { $listeningCall } from './model.ts';
-import ModalDebugger from "../../components/ModalDebugger.tsx";
+import ModalDebugger from '../../components/ModalDebugger.tsx';
 
 const ActiveCallsPage = () => {
   const listeningCall = useUnit($listeningCall);
@@ -35,7 +35,6 @@ const ActiveCallsPage = () => {
         minHeight: '100%',
       }}
     >
-      {import.meta.env.DEV && <ModalDebugger />}
       <Toolbar />
       <CallsTable />
     </Space>

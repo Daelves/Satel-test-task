@@ -1,12 +1,8 @@
 import { createDomain, createEvent, createEffect } from 'effector';
 import { formatTime } from '../../../utils/formatters';
-import {closeModal, openModal} from "../../../shared/modals";
+import { closeModal, openModal } from '../../../shared/modals';
 
-import {
-  connectToCall,
-  disconnectFromCall,
-  resetListening,
-} from './events.ts';
+import { connectToCall, disconnectFromCall, resetListening } from './events.ts';
 
 const listeningCallDomain = createDomain('listeningCall');
 
@@ -32,7 +28,6 @@ export const togglePause = listeningCallDomain.createEvent();
 export const updateTime =
   listeningCallDomain.createEvent<UpdateTimeParams | void>();
 
-
 // Эффекты для записи
 export const startRecordingFx = listeningCallDomain.createEffect(
   async (callId: string) => {
@@ -42,21 +37,21 @@ export const startRecordingFx = listeningCallDomain.createEffect(
 );
 
 export const stopRecordingFx = listeningCallDomain.createEffect(
-    async (callId: string) => {
-      console.log(`Stopping recording for call ${callId}`);
+  async (callId: string) => {
+    console.log(`Stopping recording for call ${callId}`);
 
-      // Добавим прямой вызов открытия модального окна здесь
-      console.log('Attempting to open download modal from stopRecordingFx');
-      console.log(callId)
+    // Добавим прямой вызов открытия модального окна здесь
+    console.log('Attempting to open download modal from stopRecordingFx');
+    console.log(callId);
 
-      // Вызов напрямую из эффекта
-      openModal({
-        key: 'download',
-        params: { callId }
-      });
+    // Вызов напрямую из эффекта
+    openModal({
+      key: 'download',
+      params: { callId },
+    });
 
-      return callId;
-    }
+    return callId;
+  }
 );
 
 // События обновления прогресса загрузки

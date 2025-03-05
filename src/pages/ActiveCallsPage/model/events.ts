@@ -4,10 +4,10 @@ const eventsDomain = createDomain('callsEvents');
 
 // События, общие для модулей
 export const connectToCall = eventsDomain.createEvent<{
-    id: string;
-    startTime: string;
-    participants: string[];
-    appealsId: string;
+  id: string;
+  startTime: string;
+  participants: string[];
+  appealsId: string;
 }>();
 
 export const disconnectFromCall = eventsDomain.createEvent();

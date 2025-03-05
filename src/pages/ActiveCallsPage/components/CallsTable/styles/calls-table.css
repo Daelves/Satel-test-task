@@ -1,4 +1,3 @@
-
 .active-listening-row {
   background-color: #f6ffed;
 }
@@ -8,11 +7,15 @@
 }
 
 /* Чередование цвета строк таблицы */
-.calls-table-container .ant-table-tbody > tr:nth-child(even):not(.ant-table-expanded-row):not(.active-listening-row) {
+.calls-table-container
+  .ant-table-tbody
+  > tr:nth-child(even):not(.ant-table-expanded-row):not(.active-listening-row) {
   background-color: #fafafa; /* Светло-серый цвет для четных строк */
 }
 
-.calls-table-container .ant-table-tbody > tr:nth-child(odd):not(.ant-table-expanded-row):not(.active-listening-row) {
+.calls-table-container
+  .ant-table-tbody
+  > tr:nth-child(odd):not(.ant-table-expanded-row):not(.active-listening-row) {
   background-color: #ffffff; /* Белый цвет для нечетных строк */
 }
 
@@ -42,8 +45,6 @@
   border-left: 1px solid #b7eb8f !important;
   border-right: 1px solid #b7eb8f !important;
 }
-
-
 
 /* Таблица активных звонков */
 .calls-table-container {
@@ -147,4 +148,3 @@
   justify-content: center;
   margin-left: 16px;
 }
-

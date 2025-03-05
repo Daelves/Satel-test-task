@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { ModalComponent } from '../../../../../shared/modals/types.ts';
-import {useUnit} from "effector-react";
-import {$downloadProgress} from "../../../model/listeningCall.ts";
+import { ModalComponentType } from '../../../../../shared/modals';
+import { useUnit } from 'effector-react';
+import {$downloadProgress, closeDownloadModal} from '../../../model/listeningCall.ts';
 
 interface DownloadModalProps {
   onClose: () => void;
   callId?: string;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> = ({ onClose, callId }) => {
+const DownloadModal: React.FC<DownloadModalProps> & { modalConfig: any } = ({ onClose, callId }) => {
     const progress = useUnit($downloadProgress);
 
     const handleDownload = () => {
         console.log('Downloading call recording for call ID:', callId);
+        onClose();
+    };
+
+    const handleClose = () => {
+        closeDownloadModal();
         onClose();
     };
 
@@ -41,15 +46,20 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ onClose, callId }) => {
                         }}
                     />
                 </div>
+
             </div>
 
             <div
                 style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
+                    justifyContent: 'space-between',
                     marginTop: '20px',
                 }}
             >
+                <Button onClick={handleClose} variant="solid" color="danger">
+                    Закрыть
+                </Button>
+
                 <Button
                     type='primary'
                     icon={<DownloadOutlined />}
@@ -68,9 +78,6 @@ DownloadModal.modalConfig = {
     title: 'Загрузка записи звонка',
     maskClosable: false,
     closable: false,
-    defaultParams: {
-        callId: '',
-    },
 };
 
-export default DownloadModal as ModalComponent;
+export default DownloadModal as ModalComponentType;

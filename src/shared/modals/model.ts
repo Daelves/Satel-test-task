@@ -26,10 +26,20 @@ export const registerModal = (
   key: string,
   component: React.ComponentType<any>
 ) => {
-  $registeredModals.setState((state) => ({
-    ...state,
-    [key]: component,
-  }));
+  console.log(`Registering modal: ${key}`, component);
+
+  const previousState = $registeredModals.getState();
+  console.log('Previous modals state:', Object.keys(previousState));
+
+  const newState = {
+    ...previousState,
+    [key]: component
+  };
+
+  $registeredModals.setState(newState);
+
+  console.log('New modals state:', Object.keys($registeredModals.getState()));
+  return key; // Возвращаем ключ для проверки
 };
 
 $modalsState

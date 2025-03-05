@@ -13,7 +13,7 @@ import {
   updateDownloadProgress,
   updateTime,
 } from '../model/listeningCall.ts';
-import {useModal} from "../../../shared/modals";
+import { useModal } from '../../../shared/modals';
 
 /**
  * Хук для расчета времени с начала звонка
@@ -193,7 +193,6 @@ export const useDownloadSimulation = () => {
         if (progress >= 100) {
           clearInterval(interval);
           setTimeout(() => {
-            closeDownloadModal();
           }, 500);
         }
       }, 300);

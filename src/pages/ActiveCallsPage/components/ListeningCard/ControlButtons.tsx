@@ -17,9 +17,9 @@ import {
   $isRecording,
   startRecordingFx,
   stopRecordingFx,
-  togglePause
-} from "../../model/listeningCall.ts";
-import {openModal} from "../../../../shared/modals";
+  togglePause,
+} from '../../model/listeningCall.ts';
+import { openModal } from '../../../../shared/modals';
 
 const ControlButtons: React.FC = () => {
   const isPaused = useUnit($isPaused);
@@ -27,7 +27,7 @@ const ControlButtons: React.FC = () => {
   const listeningCall = useUnit($listeningCall);
 
   const { open: openPhoneSelectModal } = useModal('phoneSelect');
-  const { open: openDownloadModal } = useModal('download')
+  const { open: openDownloadModal } = useModal('download');
 
   if (!listeningCall) return null;
 
@@ -60,10 +60,7 @@ const ControlButtons: React.FC = () => {
    */
   const handleRecordStop = () => {
     if (listeningCall) {
-      // Сначала останавливаем запись
       stopRecordingFx(listeningCall.id);
-
-      // Затем принудительно открываем модальное окно
       openModal({
         key: 'download',
         params: { callId: listeningCall.id }
@@ -84,67 +81,52 @@ const ControlButtons: React.FC = () => {
     });
   };
 
-  const testOpenModal = () => {
-    console.log('Пытаемся открыть модальное окно напрямую');
-    openModal({
-      key: 'download',
-      params: { callId: listeningCall?.id || 'test-id' }
-    });
-  };
-
   return (
-      <div className="control-buttons">
-        <Tooltip
-            title={isPaused ? 'Продолжить прослушивание' : 'Поставить на паузу'}
-        >
-          <Button
-              type="text"
-              className="control-btn pause-btn"
-              icon={isPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
-              onClick={handlePauseResume}
-          />
-        </Tooltip>
-
-        <Tooltip title="Отключиться от звонка">
-          <Button
-              type="text"
-              className="control-btn disconnect-btn"
-              icon={<PhoneOutlined />}
-              onClick={handleDisconnect}
-          />
-        </Tooltip>
-
-        <Tooltip title="Добавить на контроль">
-          <Button
-              type="text"
-              className="control-btn add-control-btn"
-              icon={<PlusOutlined />}
-              onClick={handleAddToControlClick}
-          />
-        </Tooltip>
+    <div className='control-buttons'>
+      <Tooltip
+        title={isPaused ? 'Продолжить прослушивание' : 'Поставить на паузу'}
+      >
         <Button
-            type="text"
-            className="control-btn"
-            onClick={testOpenModal}
-        >
-          Test Modal
-        </Button>
+          type='text'
+          className='control-btn pause-btn'
+          icon={isPaused ? <PlayCircleOutlined /> : <PauseCircleOutlined />}
+          onClick={handlePauseResume}
+        />
+      </Tooltip>
 
-        {!isRecording ? (
-            <Tooltip title="Начать запись звонка">
-              <Button
-                  type="text"
-                  className="control-btn record-btn"
-                  icon={<AudioOutlined />}
-                  onClick={handleRecordStart}
-              />
-            </Tooltip>
-        ) : (
-            <Tooltip title="Остановить запись">
-              <div className="recording-indicator" onClick={handleRecordStop} />
-            </Tooltip>
-        )}
-      </div>
+      <Tooltip title='Отключиться от звонка'>
+        <Button
+          type='text'
+          className='control-btn disconnect-btn'
+          icon={<PhoneOutlined />}
+          onClick={handleDisconnect}
+        />
+      </Tooltip>
+
+      <Tooltip title='Добавить на контроль'>
+        <Button
+          type='text'
+          className='control-btn add-control-btn'
+          icon={<PlusOutlined />}
+          onClick={handleAddToControlClick}
+        />
+      </Tooltip>
+
+      {!isRecording ? (
+        <Tooltip title='Начать запись звонка'>
+          <Button
+            type='text'
+            className='control-btn record-btn'
+            icon={<AudioOutlined />}
+            onClick={handleRecordStart}
+          />
+        </Tooltip>
+      ) : (
+        <Tooltip title='Остановить запись'>
+          <div className='recording-indicator' onClick={handleRecordStop} />
+        </Tooltip>
+      )}
+    </div>
   );
 };
 
