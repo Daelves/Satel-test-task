@@ -1,5 +1,9 @@
-/* src/pages/ActiveCallsPage/components/CallsTable/styles/calls-table.css */
+
 .active-listening-row {
+  background-color: #f6ffed;
+}
+
+.active-listening-row:hover td {
   background-color: #f6ffed !important;
 }
 
@@ -11,11 +15,6 @@
 .calls-table-container .ant-table-tbody > tr:nth-child(odd):not(.ant-table-expanded-row):not(.active-listening-row) {
   background-color: #ffffff; /* Белый цвет для нечетных строк */
 }
-
-/*!* Убираем стилизацию для колонки "Время начала" *!*/
-/*.time-column {*/
-/*  background-color: transparent !important; !* Убираем серый фон *!*/
-/*}*/
 
 /* Рамка для выделенной строки */
 .active-listening-row td {
@@ -44,34 +43,7 @@
   border-right: 1px solid #b7eb8f !important;
 }
 
-/* Интегрированный контейнер для ListeningCard */
-.integrated-listening-card {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  background-color: #f6ffed;
-  display: flex;
-  justify-content: center; /* Выравнивание по центру */
-}
 
-/* Контейнер ListeningCard теперь вписан в расширенную строку */
-.integrated-listening-card .listening-card-wrapper {
-  margin: 0;
-  padding: 0;
-  width: 33%; /* Занимает примерно 33% ширины строки */
-}
-
-.integrated-listening-card .listening-card-container {
-  margin: 0;
-  width: 100%;
-  border-radius: 0 !important;
-}
-
-/* Плеер внутри ListeningCard имеет закругленные края только снизу */
-.integrated-listening-card .listening-card-player {
-  border-radius: 0 0 4px 4px;
-  margin: 0;
-}
 
 /* Таблица активных звонков */
 .calls-table-container {
@@ -168,10 +140,11 @@
   padding: 0 8px;
   height: 22px;
   line-height: 22px;
-  border-radius: 2px;
+  border-radius: 3px;
   min-width: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0;
+  margin-left: 16px;
 }
+

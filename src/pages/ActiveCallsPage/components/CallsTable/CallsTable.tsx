@@ -122,7 +122,7 @@ const CallsTable: React.FC = () => {
               expandIcon: () => null,
               expandedRowRender: (record) => {
                 if (record.id === listeningCall?.id) {
-                  return <ListeningCallCard />;
+                  return <ListeningCallCard />
                 }
                 return null;
               },
