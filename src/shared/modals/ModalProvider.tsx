@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect } from 'react';
-import { registerAllModals } from './registerModals.ts';
 import ModalsContainer from './ModalsContainer.tsx';
 
 interface ModalProviderProps {
@@ -7,15 +6,11 @@ interface ModalProviderProps {
 }
 
 export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
-  useEffect(() => {
-    registerAllModals();
-  }, []);
-
   return (
-    <>
-      {children}
-      <ModalsContainer />
-    </>
+      <>
+        {children}
+        <ModalsContainer />
+      </>
   );
 };
 

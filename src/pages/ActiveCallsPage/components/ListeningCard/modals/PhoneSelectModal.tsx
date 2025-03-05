@@ -3,7 +3,7 @@ import { Button, List } from 'antd';
 import { useUnit } from 'effector-react';
 import { $listeningCall } from '../../../model';
 import useModal from '../../../../../shared/modals/useModal.ts';
-import { ModalComponent } from '../../../../../shared/modals/types.ts';
+import { ModalComponentType } from '../../../../../shared/modals';
 
 interface PhoneSelectModalProps {
   onClose: () => void;
@@ -48,4 +48,4 @@ PhoneSelectModal.modalConfig = {
   destroyOnClose: true,
 };
 
-export default PhoneSelectModal as ModalComponent;
+export default PhoneSelectModal as ModalComponentType;

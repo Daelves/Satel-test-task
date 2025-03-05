@@ -6,7 +6,7 @@ import {
   connectToCall,
   disconnectFromCall,
   resetListening,
-} from './model/listeningCall.ts';
+} from './model/events';
 
 const callsDomain = createDomain();
 const filtersDomain = createDomain();

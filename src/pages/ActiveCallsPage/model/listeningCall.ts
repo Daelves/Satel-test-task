@@ -1,5 +1,8 @@
 import { createDomain, createEvent, createEffect } from 'effector';
 import { formatTime } from '../../../utils/formatters';
+import { closeModal, openModal } from '../../../shared/modals';
+
+import { connectToCall, disconnectFromCall, resetListening } from './events.ts';
 
 const listeningCallDomain = createDomain('listeningCall');
 
@@ -22,19 +25,8 @@ export type UpdateTimeParams = {
 
 // События для управления состоянием прослушивания
 export const togglePause = listeningCallDomain.createEvent();
-export const resetListening = listeningCallDomain.createEvent();
 export const updateTime =
   listeningCallDomain.createEvent<UpdateTimeParams | void>();
-
-// События соединения и отключения от звонка
-export const connectToCall = createEvent<{
-  id: string;
-  startTime: Date;
-  participants: string[];
-  appealsId: string;
-}>();
-
-export const disconnectFromCall = createEvent<void>();
 
 // Эффекты для записи
 export const startRecordingFx = listeningCallDomain.createEffect(
@@ -47,13 +39,27 @@ export const startRecordingFx = listeningCallDomain.createEffect(
 export const stopRecordingFx = listeningCallDomain.createEffect(
   async (callId: string) => {
     console.log(`Stopping recording for call ${callId}`);
-    return false;
+
+    // Добавим прямой вызов открытия модального окна здесь
+    console.log('Attempting to open download modal from stopRecordingFx');
+    console.log(callId);
+
+    // Вызов напрямую из эффекта
+    openModal({
+      key: 'download',
+      params: { callId },
+    });
+
+    return callId;
   }
 );
 
 // События обновления прогресса загрузки
 export const updateDownloadProgress = listeningCallDomain.createEvent<number>();
 export const closeDownloadModal = listeningCallDomain.createEvent();
+closeDownloadModal.watch(() => {
+  closeModal('download');
+});
 
 // Стор с состоянием прослушивания
 export const $listeningCallState =

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Button, Select, DatePicker, Space, Checkbox } from 'antd';
 import { applyFilters } from '../../../model/callsTable.ts';
-import { ModalComponent } from '../../../../../shared/modals/types.ts';
+import { ModalComponentType } from '../../../../../shared/modals';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -82,4 +82,4 @@ FilterModal.modalConfig = {
   },
 };
 
-export default FilterModal as ModalComponent;
+export default FilterModal as ModalComponentType;
