@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react';
 import { $listeningCall } from '../model';
 
 import { formatTime } from '../../../utils/formatters';
-import {updateTime} from "../model/listeningCall.ts";
+import { updateTime } from '../model/listeningCall.ts';
 
 export const useCallDuration = () => {
   const listeningCall = useUnit($listeningCall);

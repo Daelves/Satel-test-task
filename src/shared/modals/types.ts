@@ -1,5 +1,3 @@
-import React from 'react';
-
 export interface ModalConfig {
   width?: number | string;
   maskClosable?: boolean;

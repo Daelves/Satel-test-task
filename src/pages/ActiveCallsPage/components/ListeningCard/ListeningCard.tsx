@@ -7,8 +7,10 @@ import ControlButtons from './ControlButtons';
 import './styles/listening-card.css';
 
 import {
-  $callDuration, $isPaused,
-  $isRecording, $recordingTime,
+  $callDuration,
+  $isPaused,
+  $isRecording,
+  $recordingTime,
 } from '../../model/listeningCall.ts';
 import { useCallDuration } from '../../hooks/useCallDuration.ts';
 

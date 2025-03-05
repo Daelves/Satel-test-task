@@ -1,8 +1,7 @@
 import React from 'react';
 import { Typography } from 'antd';
 import { useUnit } from 'effector-react';
-import {$recordingTime} from "../../model/listeningCall.ts";
-
+import { $recordingTime } from '../../model/listeningCall.ts';
 
 const { Text } = Typography;
 
