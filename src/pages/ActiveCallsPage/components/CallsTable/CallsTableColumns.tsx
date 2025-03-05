@@ -49,12 +49,6 @@ export const getColumns = ({
                           type="text"
                           size="small"
                           className="participant-count-badge"
-                          style={{
-                            marginLeft: 8,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
                       >
                         +{hiddenCount}
                       </Button>
