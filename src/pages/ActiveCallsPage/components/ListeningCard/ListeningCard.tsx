@@ -1,3 +1,4 @@
+// src/pages/ActiveCallsPage/components/ListeningCard/ListeningCard.tsx
 import React from 'react';
 import { Typography } from 'antd';
 import { useUnit } from 'effector-react';
@@ -6,8 +7,10 @@ import ControlButtons from './ControlButtons';
 import './styles/listening-card.css';
 
 import {
-  $callDuration, $isPaused,
-  $isRecording, $recordingTime,
+  $callDuration,
+  $isPaused,
+  $isRecording,
+  $recordingTime,
 } from '../../model/listeningCall.ts';
 import { useCallDuration } from '../../hooks/useCallDuration.ts';
 

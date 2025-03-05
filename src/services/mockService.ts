@@ -1,8 +1,7 @@
-
 import { Call, ListeningCall } from '../pages/ActiveCallsPage/types';
 import { mockCalls as generatedMockCalls } from '../api/mackCallsData';
 
-export const mockCalls: Call[] = generatedMockCalls.map(call => ({
+export const mockCalls: Call[] = generatedMockCalls.map((call) => ({
   id: call.id,
   callsId: `CALL-${call.id}`,
   recording: call.isRecording,

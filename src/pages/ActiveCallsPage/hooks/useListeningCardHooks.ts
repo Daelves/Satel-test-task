@@ -8,10 +8,11 @@ import {
   $downloadModalVisible,
   $isPaused,
   $isRecording,
-  $listeningCallState, closeDownloadModal,
+  $listeningCallState,
+  closeDownloadModal,
   updateDownloadProgress,
-  updateTime
-} from "../model/listeningCall.ts";
+  updateTime,
+} from '../model/listeningCall.ts';
 
 /**
  * Хук для расчета времени с начала звонка
