@@ -19,6 +19,7 @@ import {
   stopRecordingFx,
   togglePause
 } from "../../model/listeningCall.ts";
+import {openModal} from "../../../../shared/modals";
 
 const ControlButtons: React.FC = () => {
   const isPaused = useUnit($isPaused);
@@ -26,6 +27,7 @@ const ControlButtons: React.FC = () => {
   const listeningCall = useUnit($listeningCall);
 
   const { open: openPhoneSelectModal } = useModal('phoneSelect');
+  const { open: openDownloadModal } = useModal('download')
 
   if (!listeningCall) return null;
 
@@ -57,8 +59,18 @@ const ControlButtons: React.FC = () => {
    * Обработчик кнопки окончания записи звонка
    */
   const handleRecordStop = () => {
-    stopRecordingFx(listeningCall.id);
-    console.log('Остановка записи звонка');
+    if (listeningCall) {
+      // Сначала останавливаем запись
+      stopRecordingFx(listeningCall.id);
+
+      // Затем принудительно открываем модальное окно
+      openModal({
+        key: 'download',
+        params: { callId: listeningCall.id }
+      });
+
+      console.log('Остановка записи звонка и открытие модального окна');
+    }
   };
 
   /**
@@ -69,6 +81,14 @@ const ControlButtons: React.FC = () => {
       onSelectPhone: (phone: string) => {
         console.log('Выбран номер для контроля:', phone);
       },
+    });
+  };
+
+  const testOpenModal = () => {
+    console.log('Пытаемся открыть модальное окно напрямую');
+    openModal({
+      key: 'download',
+      params: { callId: listeningCall?.id || 'test-id' }
     });
   };
 
@@ -102,6 +122,13 @@ const ControlButtons: React.FC = () => {
               onClick={handleAddToControlClick}
           />
         </Tooltip>
+        <Button
+            type="text"
+            className="control-btn"
+            onClick={testOpenModal}
+        >
+          Test Modal
+        </Button>
 
         {!isRecording ? (
             <Tooltip title="Начать запись звонка">
