@@ -1,5 +1,5 @@
 import { createStore, createEvent, createEffect, sample } from 'effector';
-import { connectToCall } from './listeningCall.ts';
+import { connectToCall } from './events';
 
 export interface CallRecord {
   id: string;

@@ -5,7 +5,6 @@ import RuleModal from '../../pages/ActiveCallsPage/components/ListeningCard/moda
 import DownloadModal from '../../pages/ActiveCallsPage/components/ListeningCard/modals/DownloadModal.tsx';
 
 export const registerAllModals = () => {
-  // Модальные окна для компонента ListeningCard
   registerModal('phoneSelect', PhoneSelectModal);
   registerModal('rule', RuleModal);
   registerModal('download', DownloadModal);
