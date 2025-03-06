@@ -63,7 +63,7 @@ const ControlButtons: React.FC = () => {
       stopRecordingFx(listeningCall.id);
       openModal({
         key: 'download',
-        params: { callId: listeningCall.id }
+        params: { callId: listeningCall.id },
       });
 
       console.log('Остановка записи звонка и открытие модального окна');

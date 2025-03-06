@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface ModalConfig {
   width?: number | string;
@@ -19,4 +19,5 @@ export interface ModalState {
   params: Record<string, unknown>;
 }
 
-export type ModalFC<P = Record<string, unknown>> = React.FC<P> & ModalComponentType;
+export type ModalFC<P = Record<string, unknown>> = React.FC<P> &
+  ModalComponentType;
