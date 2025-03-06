@@ -33,7 +33,7 @@ export const registerModal = (
 
   const newState = {
     ...previousState,
-    [key]: component
+    [key]: component,
   };
 
   $registeredModals.setState(newState);

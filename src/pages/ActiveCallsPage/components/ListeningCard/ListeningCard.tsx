@@ -1,4 +1,3 @@
-// src/pages/ActiveCallsPage/components/ListeningCard/ListeningCard.tsx
 import React from 'react';
 import { Typography } from 'antd';
 import { useUnit } from 'effector-react';
@@ -6,25 +5,16 @@ import { $listeningCall } from '../../model.ts';
 import ControlButtons from './ControlButtons';
 import './styles/listening-card.css';
 
-import {
-  $callDuration,
-  $isPaused,
-  $isRecording,
-  $recordingTime,
-} from '../../model/listeningCall.ts';
-import { useCallDuration } from '../../hooks/useCallDuration.ts';
+import { $isPaused, $isRecording } from '../../model/listeningCall.ts';
+import CallDurationDisplay from './CallDurationDisplay.tsx';
+import RecordingTimeDisplay from './RecordingTimeDisplay.tsx';
 
 const { Text } = Typography;
 
 const ListeningCard: React.FC = () => {
   const listeningCall = useUnit($listeningCall);
-  const recordingTime = useUnit($recordingTime);
   const isPaused = useUnit($isPaused);
   const isRecording = useUnit($isRecording);
-  const callDuration = useUnit($callDuration);
-
-  // Используем хук для обновления длительности звонка
-  useCallDuration();
 
   if (!listeningCall) return null;
 
@@ -37,14 +27,14 @@ const ListeningCard: React.FC = () => {
           </div>
           <div className='listening-card-content'>
             <div className='timer-container'>
-              <Text className='current-time'>{callDuration}</Text>
+              <CallDurationDisplay />
             </div>
             <div className='control-buttons-container'>
               <ControlButtons />
             </div>
             {isRecording && (
               <div className='recording-time-container'>
-                <Text className='recording-time'>{recordingTime}</Text>
+                <RecordingTimeDisplay />
               </div>
             )}
           </div>

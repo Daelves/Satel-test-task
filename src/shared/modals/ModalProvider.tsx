@@ -7,10 +7,10 @@ interface ModalProviderProps {
 
 export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   return (
-      <>
-        {children}
-        <ModalsContainer />
-      </>
+    <>
+      {children}
+      <ModalsContainer />
+    </>
   );
 };
 

@@ -6,10 +6,10 @@ import FilterModal from './pages/ActiveCallsPage/components/ListeningCard/modals
 
 // Экспортируем функцию для явной регистрации модальных окон
 export const registerModalComponents = () => {
-    console.log('Explicitly registering modals...');
-    registerModal('download', DownloadModal);
-    registerModal('phoneSelect', PhoneSelectModal);
-    registerModal('rule', RuleModal);
-    registerModal('filter', FilterModal);
-    console.log('Modals registered');
+  console.log('Explicitly registering modals...');
+  registerModal('download', DownloadModal);
+  registerModal('phoneSelect', PhoneSelectModal);
+  registerModal('rule', RuleModal);
+  registerModal('filter', FilterModal);
+  console.log('Modals registered');
 };
