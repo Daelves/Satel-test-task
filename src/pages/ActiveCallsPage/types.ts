@@ -5,9 +5,11 @@ export interface Call {
   appealsId: string;
   callsStartTime: string;
   phoneNumbers: string[];
+  radioStationId?: string;
 }
 
 export interface ListeningCall extends Call {
   duration: string;
   isRecording: boolean;
+  radioStationId?: string;
 }

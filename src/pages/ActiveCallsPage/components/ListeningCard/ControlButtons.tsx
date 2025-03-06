@@ -1,5 +1,5 @@
 // src/pages/ActiveCallsPage/components/ListeningCard/ControlButtons.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Tooltip } from 'antd';
 import {
   PauseCircleOutlined,
@@ -20,6 +20,13 @@ import {
   togglePause,
 } from '../../model/listeningCall.ts';
 import { openModal } from '../../../../shared/modals';
+import {
+  destroyRadioPlayer,
+  initRadioPlayer,
+  pauseRadio,
+  playRadio,
+} from '../../../../services/radioService.ts';
+import VolumeControl from './VolumeControl.tsx';
 
 const ControlButtons: React.FC = () => {
   const isPaused = useUnit($isPaused);
@@ -29,35 +36,58 @@ const ControlButtons: React.FC = () => {
   const { open: openPhoneSelectModal } = useModal('phoneSelect');
   const { open: openDownloadModal } = useModal('download');
 
+  useEffect(() => {
+    if (listeningCall) {
+      initRadioPlayer();
+      if (!isPaused) {
+        playRadio();
+      }
+    }
+
+    // Уничтожаем плеер при отключении от звонка
+    return () => {
+      destroyRadioPlayer();
+    };
+  }, [listeningCall]);
+
+  useEffect(() => {
+    if (listeningCall) {
+      // Проверяем, что плеер инициализирован
+      // и начинаем воспроизведение, если звонок не на паузе
+      if (!isPaused) {
+        playRadio();
+      } else {
+        pauseRadio();
+      }
+    }
+
+    // Очистка при размонтировании
+    return () => {
+      // Не нужно вызывать destroyRadioPlayer здесь,
+      // так как это будет сделано в switchRadioStationFx
+      // Просто останавливаем воспроизведение
+      pauseRadio();
+    };
+  }, [listeningCall, isPaused]);
+
   if (!listeningCall) return null;
 
-  /**
-   * Обработчик кнопки паузы/воспроизведения
-   */
   const handlePauseResume = () => {
     togglePause();
     console.log(`${isPaused ? 'Возобновление' : 'Пауза'} прослушивания`);
   };
 
-  /**
-   * Обработчик отключения от звонка
-   */
   const handleDisconnect = () => {
+    pauseRadio();
     stopListeningFx(listeningCall.id);
     console.log('Отключение от звонка');
   };
 
-  /**
-   * Обработчик кнопки начала записи звонка
-   */
   const handleRecordStart = () => {
     startRecordingFx(listeningCall.id);
     console.log('Начало записи звонка');
   };
 
-  /**
-   * Обработчик кнопки окончания записи звонка
-   */
   const handleRecordStop = () => {
     if (listeningCall) {
       stopRecordingFx(listeningCall.id);
@@ -70,9 +100,6 @@ const ControlButtons: React.FC = () => {
     }
   };
 
-  /**
-   * Обработчик добавления звонка на контроль
-   */
   const handleAddToControlClick = () => {
     openPhoneSelectModal({
       onSelectPhone: (phone: string) => {
@@ -126,6 +153,7 @@ const ControlButtons: React.FC = () => {
           <div className='recording-indicator' onClick={handleRecordStop} />
         </Tooltip>
       )}
+      <VolumeControl />
     </div>
   );
 };

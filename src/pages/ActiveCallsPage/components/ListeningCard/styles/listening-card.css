@@ -162,3 +162,37 @@
     align-self: flex-end;
   }
 }
+
+.control-buttons .volume-control {
+  margin-left: 12px;
+}
+
+@media (max-width: 576px) {
+  .player-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .player-label .ant-tag {
+    margin-top: 4px;
+  }
+
+  .control-buttons-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .control-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .control-buttons .volume-control {
+    margin-left: 0;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+}
