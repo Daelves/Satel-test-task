@@ -7,6 +7,7 @@ import {
   disconnectFromCall,
   resetListening,
 } from './model/events';
+import {destroyRadioPlayer, getRadioStationForCall, initRadioPlayer} from "../../services/radioService.ts";
 
 const callsDomain = createDomain();
 const filtersDomain = createDomain();
@@ -27,7 +28,16 @@ export const startListeningFx = listeningDomain.createEffect(
     try {
       const result = await mockCallsService.startListening(callId);
       console.log('startListeningFx успешно выполнен:', result);
-      return result;
+
+      const stationId = result.radioStationId || getRadioStationForCall(callId);
+
+      destroyRadioPlayer();
+      initRadioPlayer(stationId);
+
+      return {
+        ...result,
+        radioStationId: stationId
+      };
     } catch (error) {
       console.error('Ошибка в startListeningFx:', error);
       throw error;
@@ -47,6 +57,21 @@ export const stopListeningFx = listeningDomain.createEffect(
       throw error;
     }
   }
+);
+
+export const switchRadioStationFx = listeningDomain.createEffect(
+    async (callId: string) => {
+      // Останавливаем текущую станцию
+      destroyRadioPlayer();
+
+      // Определяем новую станцию для звонка
+      const stationId = getRadioStationForCall(callId);
+
+      // Инициализируем плеер с новой станцией
+      initRadioPlayer(stationId);
+
+      return stationId;
+    }
 );
 
 // События для управления фильтрами
@@ -118,6 +143,30 @@ sample({
     currentCall !== null && currentCall.id !== newCallId,
   fn: (currentCall) => currentCall!.id,
   target: stopListeningFx,
+});
+
+sample({
+  clock: stopListeningFx.done,
+  source: switchCallRequested,
+  filter: (newCallId, { params }) => newCallId !== params,
+  fn: (newCallId) => newCallId,
+  target: switchRadioStationFx,
+});
+
+sample({
+  clock: switchCallRequested,
+  source: $listeningCall,
+  filter: (currentCall, newCallId) =>
+      currentCall === null || currentCall.id === newCallId,
+  fn: (_, newCallId) => newCallId,
+  target: switchRadioStationFx, // Сначала переключаем радиостанцию
+});
+
+sample({
+  clock: switchRadioStationFx.done,
+  source: switchCallRequested,
+  filter: (newCallId, { params }) => newCallId !== params,
+  target: startListeningFx,
 });
 
 // После отключения от текущего звонка, подключаемся к новому

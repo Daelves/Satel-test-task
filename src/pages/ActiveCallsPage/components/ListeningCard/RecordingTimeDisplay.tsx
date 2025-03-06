@@ -3,7 +3,7 @@ import { Typography } from 'antd';
 import { useUnit } from 'effector-react';
 import { $isRecording } from '../../model/listeningCall.ts';
 import { formatTime } from '../../../../utils/formatters.ts';
-import './styles/timer-animation.css'
+import './styles/timer-animation.css';
 
 const { Text } = Typography;
 

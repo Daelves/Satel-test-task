@@ -1,15 +1,11 @@
 import React from 'react';
-import { Typography } from 'antd';
 import { useUnit } from 'effector-react';
 import { $listeningCall } from '../../model.ts';
 import ControlButtons from './ControlButtons';
 import './styles/listening-card.css';
-
 import { $isPaused, $isRecording } from '../../model/listeningCall.ts';
 import CallDurationDisplay from './CallDurationDisplay.tsx';
 import RecordingTimeDisplay from './RecordingTimeDisplay.tsx';
-
-const { Text } = Typography;
 
 const ListeningCard: React.FC = () => {
   const listeningCall = useUnit($listeningCall);

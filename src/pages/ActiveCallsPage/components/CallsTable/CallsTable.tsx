@@ -20,7 +20,7 @@ import './styles/calls-table.css';
 import {
   $listeningCall,
   startListeningFx,
-  stopListeningFx,
+  stopListeningFx, switchCallRequested,
 } from '../../model.ts';
 import ListeningCallCard from '../ListeningCallCard.tsx';
 
@@ -46,7 +46,7 @@ const CallsTable: React.FC = () => {
 
   const handleConnectCall = useCallback(
     (call: CallRecord) => {
-      startListeningFx(call.id);
+      switchCallRequested(call.id);
       messageApi.success(`Подключение к звонку ${call.appealsId}`);
     },
     [messageApi]
