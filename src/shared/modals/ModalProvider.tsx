@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode } from 'react';
 import ModalsContainer from './ModalsContainer.tsx';
 
 interface ModalProviderProps {
