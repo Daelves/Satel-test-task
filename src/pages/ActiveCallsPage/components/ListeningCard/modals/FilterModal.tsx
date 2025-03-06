@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Button, Select, DatePicker, Space, Checkbox } from 'antd';
 import { applyFilters } from '../../../model/callsTable.ts';
-import { ModalComponentType } from '../../../../../shared/modals';
+import {ModalFC} from "../../../../../shared/modals/types.ts";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -11,7 +11,7 @@ interface FilterModalProps {
   currentFilters?: Record<string, any>;
 }
 
-const FilterModal: React.FC<FilterModalProps> = ({
+const FilterModal: ModalFC<FilterModalProps> = ({
   onClose,
   currentFilters = {},
 }) => {
@@ -82,4 +82,4 @@ FilterModal.modalConfig = {
   },
 };
 
-export default FilterModal as ModalComponentType;
+export default FilterModal;

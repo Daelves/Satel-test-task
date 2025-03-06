@@ -4,13 +4,14 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { ModalComponentType } from '../../../../../shared/modals';
 import { useUnit } from 'effector-react';
 import {$downloadProgress, closeDownloadModal} from '../../../model/listeningCall.ts';
+import {ModalFC} from "../../../../../shared/modals/types.ts";
 
 interface DownloadModalProps {
   onClose: () => void;
   callId?: string;
 }
 
-const DownloadModal: React.FC<DownloadModalProps> & { modalConfig: any } = ({ onClose, callId }) => {
+const DownloadModal: ModalFC<DownloadModalProps> & { modalConfig: any } = ({ onClose, callId }) => {
     const progress = useUnit($downloadProgress);
 
     const handleDownload = () => {
@@ -80,4 +81,4 @@ DownloadModal.modalConfig = {
     closable: false,
 };
 
-export default DownloadModal as ModalComponentType;
+export default DownloadModal;

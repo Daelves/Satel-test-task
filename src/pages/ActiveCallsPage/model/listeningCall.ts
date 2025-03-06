@@ -1,8 +1,8 @@
-import { createDomain, createEvent, createEffect } from 'effector';
+import { createDomain } from 'effector';
 import { formatTime } from '../../../utils/formatters';
 import { closeModal, openModal } from '../../../shared/modals';
 
-import { connectToCall, disconnectFromCall, resetListening } from './events.ts';
+import { resetListening } from './events.ts';
 
 const listeningCallDomain = createDomain('listeningCall');
 
