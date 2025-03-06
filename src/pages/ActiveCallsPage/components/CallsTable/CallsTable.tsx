@@ -18,9 +18,10 @@ import { mockCalls } from '../../../../api/mackCallsData.ts';
 import { isDevelopment } from '../../../../utils/environment.ts';
 import './styles/calls-table.css';
 import {
-  $listeningCall,
+  $listeningCall, disconnectCallRequested,
   startListeningFx,
-  stopListeningFx, switchCallRequested,
+  stopListeningFx,
+  switchCallRequested,
 } from '../../model.ts';
 import ListeningCallCard from '../ListeningCallCard.tsx';
 
@@ -54,7 +55,7 @@ const CallsTable: React.FC = () => {
 
   const handleDisconnectCall = useCallback(() => {
     if (listeningCall) {
-      stopListeningFx(listeningCall.id);
+      disconnectCallRequested(listeningCall.id); // Используем новое событие для прямого отключения
       messageApi.success('Отключение от звонка');
     }
   }, [listeningCall, messageApi]);
@@ -93,7 +94,6 @@ const CallsTable: React.FC = () => {
     }
   };
 
-  // Убеждаемся, что expandedRowKeys корректно установлены
   const expandedRowKeys = listeningCall ? [listeningCall.id] : [];
 
   return (
