@@ -1,6 +1,5 @@
-
 import React, { useEffect } from 'react';
-import { Button, Tooltip } from 'antd';
+import {Button, Dropdown, Tooltip} from 'antd';
 import {
   PauseCircleOutlined,
   PlayCircleOutlined,
@@ -31,8 +30,7 @@ const ControlButtons: React.FC = () => {
   const isRecording = useUnit($isRecording);
   const listeningCall = useUnit($listeningCall);
 
-  const { open: openPhoneSelectModal } = useModal('phoneSelect');
-  const { open: openDownloadModal } = useModal('download');
+  const { open: openRuleModal } = useModal('rule');
 
   useEffect(() => {
     if (listeningCall) {
@@ -76,15 +74,12 @@ const ControlButtons: React.FC = () => {
     }
   };
 
-  const handleAddToControlClick = () => {
-    openPhoneSelectModal({
-      onSelectPhone: (phone: string) => {
-        console.log('Выбран номер для контроля:', phone);
-      },
-    });
+  const handlePhoneSelect = (phone: string) => {
+    openRuleModal({ phoneNumber: phone });
+    console.log('Выбран номер для контроля:', phone);
   };
 
-  return (
+   return (
       <div className='control-buttons'>
         <Tooltip
             title={isPaused ? 'Продолжить прослушивание' : 'Поставить на паузу'}
@@ -107,12 +102,22 @@ const ControlButtons: React.FC = () => {
         </Tooltip>
 
         <Tooltip title='Добавить на контроль'>
+          <Dropdown
+              menu={{ items: listeningCall.phoneNumbers?.map((phone, index) => ({
+                  key: index.toString(),
+                  label: phone,
+                  onClick: () => handlePhoneSelect(phone)
+                })) }}
+              trigger={['click']}
+              placement="bottomCenter"
+              arrow
+          >
           <Button
               type='text'
               className='control-btn add-control-btn'
               icon={<PlusOutlined />}
-              onClick={handleAddToControlClick}
           />
+          </Dropdown>
         </Tooltip>
 
         {!isRecording ? (
