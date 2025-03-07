@@ -18,9 +18,8 @@ import { mockCalls } from '../../../../api/mackCallsData.ts';
 import { isDevelopment } from '../../../../utils/environment.ts';
 import './styles/calls-table.css';
 import {
-  $listeningCall, disconnectCallRequested,
-  startListeningFx,
-  stopListeningFx,
+  $listeningCall,
+  disconnectCallRequested,
   switchCallRequested,
 } from '../../model.ts';
 import ListeningCallCard from '../ListeningCallCard.tsx';

@@ -87,8 +87,8 @@ export const getRadioStationForCall = (callId: string): string => {
     return Math.abs(hash);
   };
 
-    const stationIndex = hashCode(callId) % radioStations.length;
-    return radioStations[stationIndex].id;
+  const stationIndex = hashCode(callId) % radioStations.length;
+  return radioStations[stationIndex].id;
 };
 
 export const selectStation = radioDomain.createEvent<string>();
@@ -99,7 +99,7 @@ export const setVolume = radioDomain.createEvent<number>();
 export const destroyRadioPlayer = radioDomain.createEvent();
 
 export const $radioPlayer = radioDomain.createStore<HTMLAudioElement | null>(
-    null
+  null
 );
 export const $isPlaying = radioDomain.createStore(false);
 export const $volume = radioDomain.createStore(0.3);
@@ -107,94 +107,93 @@ export const $currentStationId = radioDomain.createStore<string>('europa-plus');
 
 // Добавляем логирование
 destroyRadioPlayer.watch(() => {
-    console.log('Radio player destroyed');
+  console.log('Radio player destroyed');
 });
 
 initRadioPlayer.watch((stationId) => {
-    console.log('Radio player initialized with station ID:', stationId);
+  console.log('Radio player initialized with station ID:', stationId);
 });
 
 $radioPlayer
-    .on(initRadioPlayer, (_, stationId) => {
-        // Если не передан stationId, не инициализируем плеер
-        if (!stationId) {
-            console.log('No station ID provided, not initializing radio player');
-            return null;
-        }
+  .on(initRadioPlayer, (_, stationId) => {
+    // Если не передан stationId, не инициализируем плеер
+    if (!stationId) {
+      console.log('No station ID provided, not initializing radio player');
+      return null;
+    }
 
-        const targetStationId = stationId ||
-            radioStations[Math.floor(Math.random() * radioStations.length)].id;
+    const targetStationId =
+      stationId ||
+      radioStations[Math.floor(Math.random() * radioStations.length)].id;
 
-        const station = radioStations.find(s => s.id === targetStationId) ||
-            radioStations[0];
+    const station =
+      radioStations.find((s) => s.id === targetStationId) || radioStations[0];
 
-        console.log('Creating new audio player for station:', station.name);
+    console.log('Creating new audio player for station:', station.name);
 
-        const audio = new Audio(station.url);
-        audio.volume = $volume.getState();
-        audio.autoplay = false; // Изменяем на false, чтобы управлять через playRadio
+    const audio = new Audio(station.url);
+    audio.volume = $volume.getState();
+    audio.autoplay = false; // Изменяем на false, чтобы управлять через playRadio
 
-        $currentStationId.setState(station.id);
+    $currentStationId.setState(station.id);
 
-        return audio;
-    })
-    .on(destroyRadioPlayer, (player) => {
-        if (player) {
-            console.log('Stopping and clearing audio player');
-            player.pause();
-            player.src = '';
-            player.load(); // Полностью выгружаем ресурс
-        }
-        return null;
-    });
+    return audio;
+  })
+  .on(destroyRadioPlayer, (player) => {
+    if (player) {
+      console.log('Stopping and clearing audio player');
+      player.pause();
+      player.src = '';
+      player.load(); // Полностью выгружаем ресурс
+    }
+    return null;
+  });
 
 $isPlaying
-    .on(playRadio, () => true)
-    .on(pauseRadio, () => false)
-    .reset(destroyRadioPlayer);
+  .on(playRadio, () => true)
+  .on(pauseRadio, () => false)
+  .reset(destroyRadioPlayer);
 
 $volume.on(setVolume, (_, volume) => volume);
 
 selectStation.watch((stationId) => {
-    const wasPlaying = $isPlaying.getState();
-    const volume = $volume.getState();
+  const wasPlaying = $isPlaying.getState();
+  const volume = $volume.getState();
 
-    destroyRadioPlayer();
+  destroyRadioPlayer();
 
-    // Только инициализируем, если был передан stationId
-    if (stationId) {
-        initRadioPlayer(stationId);
+  // Только инициализируем, если был передан stationId
+  if (stationId) {
+    initRadioPlayer(stationId);
 
-        if (wasPlaying) {
-            playRadio();
-        }
-        setVolume(volume);
+    if (wasPlaying) {
+      playRadio();
     }
+    setVolume(volume);
+  }
 });
 
 playRadio.watch(() => {
-    const player = $radioPlayer.getState();
-    if (player) {
-        console.log('Playing radio');
-        player.play().catch(err => {
-            console.error('Error playing audio:', err);
-        });
-    } else {
-        console.warn('Attempted to play radio with no player initialized');
-    }
+  const player = $radioPlayer.getState();
+  if (player) {
+    player.play().catch((err) => {
+      console.error('Error playing audio:', err);
+    });
+  } else {
+    console.warn('Attempted to play radio with no player initialized');
+  }
 });
 
 pauseRadio.watch(() => {
-    const player = $radioPlayer.getState();
-    if (player) {
-        console.log('Pausing radio');
-        player.pause();
-    }
+  const player = $radioPlayer.getState();
+  if (player) {
+    player.pause();
+  }
 });
 
 setVolume.watch((volume) => {
-    const player = $radioPlayer.getState();
-    if (player) {
-        player.volume = volume;
-    }
+  const player = $radioPlayer.getState();
+  if (player) {
+    player.volume = volume;
+  }
 });

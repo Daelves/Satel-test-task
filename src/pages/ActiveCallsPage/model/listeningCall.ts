@@ -3,6 +3,7 @@ import { formatTime } from '../../../utils/formatters';
 import { closeModal, openModal } from '../../../shared/modals';
 
 import { resetListening } from './events.ts';
+import { mockCallsService } from '../../../services/mockService.ts';
 
 const listeningCallDomain = createDomain('listeningCall');
 
@@ -38,19 +39,12 @@ export const startRecordingFx = listeningCallDomain.createEffect(
 
 export const stopRecordingFx = listeningCallDomain.createEffect(
   async (callId: string) => {
-    console.log(`Stopping recording for call ${callId}`);
+    const result = await mockCallsService.stopRecording(callId);
 
-    // Добавим прямой вызов открытия модального окна здесь
-    console.log('Attempting to open download modal from stopRecordingFx');
-    console.log(callId);
-
-    // Вызов напрямую из эффекта
-    openModal({
-      key: 'download',
-      params: { callId },
-    });
-
-    return callId;
+    return {
+      callId,
+      success: true,
+    };
   }
 );
 
@@ -61,7 +55,6 @@ closeDownloadModal.watch(() => {
   closeModal('download');
 });
 
-// Стор с состоянием прослушивания
 export const $listeningCallState =
   listeningCallDomain.createStore<ListeningCallState>({
     isPaused: false,
@@ -75,7 +68,6 @@ export const $listeningCallState =
     downloadProgress: 0,
   });
 
-// Добавляем обработчики событий
 $listeningCallState
   .on(togglePause, (state) => {
     const now = Date.now();
@@ -144,7 +136,7 @@ $listeningCallState
       ...state,
       isRecording: false,
       recordingStartTime: null,
-      isDownloadModalVisible: true,
+      isDownloadModalVisible: false,
       downloadProgress: 0,
     };
   })
