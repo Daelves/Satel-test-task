@@ -1,0 +1,109 @@
+.filter-modal-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  background: #fff;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.filter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.filter-modal-header .ant-typography {
+  margin: 0;
+}
+
+.close-button {
+  padding: 4px;
+}
+
+.filter-form {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.filter-section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.filter-section .ant-typography {
+  margin-bottom: 16px;
+}
+
+.add-condition-button {
+  margin-top: 8px;
+}
+
+.recording-checkbox,
+.listened-checkbox {
+  margin-bottom: 16px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.reset-button {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.apply-button {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.ant-modal.filter-modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.ant-modal.filter-modal .ant-modal-content {
+  height: 100vh;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-modal.filter-modal .ant-modal-body {
+  flex: 1;
+  padding: 0;
+}
+
+.filter-form .ant-input,
+.filter-form .ant-select-selector {
+  border-radius: 2px;
+}
+
+.filter-form::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filter-form::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.filter-form::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}

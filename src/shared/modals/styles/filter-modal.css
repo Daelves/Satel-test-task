@@ -1,0 +1,43 @@
+.ant-modal-wrap {
+  overflow: hidden;
+}
+
+.filter-modal {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.filter-modal .ant-modal-content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-modal .ant-modal-body {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.filter-modal .ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 768px) {
+  .filter-modal .ant-modal-content {
+    width: 100%;
+    max-width: 100%;
+  }
+}

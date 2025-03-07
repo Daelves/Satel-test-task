@@ -7,6 +7,9 @@ export interface ModalConfig {
   closable?: boolean;
   title?: string;
   defaultParams?: Record<string, unknown>;
+  style?: React.CSSProperties;
+  bodyStyle?: React.CSSProperties;
+  wrapClassName?: string;
 }
 
 export interface ModalComponentType {
