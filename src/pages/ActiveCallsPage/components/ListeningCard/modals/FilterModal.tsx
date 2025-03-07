@@ -1,10 +1,23 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Select, DatePicker, Space, Checkbox } from 'antd';
-import { applyFilters } from '../../../model/callsTable.ts';
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  DatePicker,
+  Space,
+  Checkbox,
+  Typography,
+} from 'antd';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { $callsTableState, applyFilters } from '../../../model/callsTable.ts';
 import { ModalFC } from '../../../../../shared/modals/types.ts';
+import '../styles/filter-modal.css';
+import { useUnit } from 'effector-react';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { Title, Text } = Typography;
 
 interface FilterModalProps {
   onClose: () => void;
@@ -16,15 +29,14 @@ const FilterModal: ModalFC<FilterModalProps> = ({
   currentFilters = {},
 }) => {
   const [form] = Form.useForm();
+  const { calls } = useUnit($callsTableState);
 
-  // Заполняем форму текущими фильтрами при открытии
   useEffect(() => {
     form.setFieldsValue(currentFilters);
   }, [form, currentFilters]);
 
   const handleApplyFilters = () => {
     form.validateFields().then((values) => {
-      // Применяем фильтры через effector
       applyFilters(values);
       onClose();
     });
@@ -36,47 +48,105 @@ const FilterModal: ModalFC<FilterModalProps> = ({
     onClose();
   };
 
+  const handleAddCondition = (sectionName: string) => {
+    console.log(`Добавление условия для секции: ${sectionName}`);
+  };
+
   return (
-    <Form form={form} layout='vertical'>
-      <Form.Item name='appealsId' label='Номер обращения'>
-        <Input placeholder='Введите номер обращения' />
-      </Form.Item>
+    <div className='filter-modal-container'>
+      <div className='filter-modal-header'>
+        <Title level={5}>Фильтры</Title>
+        <Button
+          type='text'
+          icon={<CloseOutlined />}
+          onClick={onClose}
+          className='close-button'
+        />
+      </div>
 
-      <Form.Item name='isRecording' label='Статус записи'>
-        <Select placeholder='Выберите статус записи' allowClear>
-          <Option value={true}>Записывается</Option>
-          <Option value={false}>Не записывается</Option>
-        </Select>
-      </Form.Item>
+      <Form form={form} layout='vertical' className='filter-form'>
+        <div className='filter-content'>
+          <div className='filter-section'>
+            <Title level={5}>Информация о звонке</Title>
 
-      <Form.Item name='phoneNumber' label='Номер телефона участника'>
-        <Input placeholder='Введите номер телефона' />
-      </Form.Item>
+            <Form.Item name='appealsId' label='ID звонка'>
+              <Select placeholder='Выберите номер'>
+                {calls.map((call) => (
+                  <Option key={call.id} value={call.appealsId}>
+                    {call.appealsId}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-      <Form.Item name='dateRange' label='Период начала звонка'>
-        <RangePicker showTime format='DD.MM.YYYY HH:mm:ss' />
-      </Form.Item>
+            <Button
+              type='dashed'
+              block
+              icon={<PlusOutlined />}
+              onClick={() => handleAddCondition('callInfo')}
+              className='add-condition-button'
+            >
+              Добавить условие
+            </Button>
+          </div>
 
-      <Form.Item name='wasListened' valuePropName='checked'>
-        <Checkbox>Только прослушанные звонки</Checkbox>
-      </Form.Item>
+          <div className='filter-section'>
+            <Title level={5}>Участники звонка</Title>
 
-      <Form.Item>
-        <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={handleReset}>Сбросить</Button>
-          <Button type='primary' onClick={handleApplyFilters}>
-            Применить
+            <Form.Item name='phoneNumber' label='Телефонный номер'>
+              <Input placeholder='Введите телефонный номер участника' />
+            </Form.Item>
+
+            <Button
+              type='dashed'
+              block
+              icon={<PlusOutlined />}
+              onClick={() => handleAddCondition('participants')}
+              className='add-condition-button'
+            >
+              Добавить условие
+            </Button>
+          </div>
+
+          <Form.Item
+            name='isRecording'
+            valuePropName='checked'
+            className='recording-checkbox'
+          >
+            <Checkbox>Только записываемые звонки</Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            name='wasListened'
+            valuePropName='checked'
+            className='listened-checkbox'
+          >
+            <Checkbox>Только прослушанные звонки</Checkbox>
+          </Form.Item>
+        </div>
+
+        <div className='filter-actions'>
+          <Button onClick={handleReset} className='reset-button'>
+            Очистить фильтр
           </Button>
-        </Space>
-      </Form.Item>
-    </Form>
+          <Button
+            type='primary'
+            onClick={handleApplyFilters}
+            className='apply-button'
+          >
+            Применить фильтр
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 };
 
 FilterModal.modalConfig = {
   width: 700,
-  title: 'Фильтры',
   maskClosable: true,
+  closable: false,
+  destroyOnClose: true,
   defaultParams: {
     currentFilters: {},
   },

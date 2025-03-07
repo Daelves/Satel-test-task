@@ -2,7 +2,6 @@ import { createDomain } from 'effector';
 import { ModalState } from './types.ts';
 import React from 'react';
 
-// Домен для модальных окон
 const modalsDomain = createDomain('modal');
 
 export const openModal = modalsDomain.createEvent<{
@@ -11,6 +10,10 @@ export const openModal = modalsDomain.createEvent<{
 }>();
 export const closeModal = modalsDomain.createEvent<string>();
 export const closeAllModals = modalsDomain.createEvent();
+export const registerModalEvent = modalsDomain.createEvent<{
+  key: string;
+  component: React.ComponentType<any>;
+}>();
 
 export const $modalsState = modalsDomain.createStore<ModalState>({
   isOpen: false,
@@ -22,23 +25,22 @@ export const $registeredModals = modalsDomain.createStore<
   Record<string, React.ComponentType<any>>
 >({});
 
+$registeredModals.on(registerModalEvent, (state, { key, component }) => {
+  console.log(`Registering modal: ${key}`, component);
+  console.log('Previous modals state:', Object.keys(state));
+
+  return {
+    ...state,
+    [key]: component,
+  };
+});
+
 export const registerModal = (
   key: string,
   component: React.ComponentType<any>
 ) => {
-  console.log(`Registering modal: ${key}`, component);
-
-  const previousState = $registeredModals.getState();
-  console.log('Previous modals state:', Object.keys(previousState));
-
-  const newState = {
-    ...previousState,
-    [key]: component,
-  };
-
-  $registeredModals.setState(newState);
-
-  console.log('New modals state:', Object.keys($registeredModals.getState()));
+  console.log(`Calling registerModal: ${key}`);
+  registerModalEvent({ key, component });
   return key; // Возвращаем ключ для проверки
 };
 

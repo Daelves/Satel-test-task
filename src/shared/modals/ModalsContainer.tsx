@@ -21,6 +21,11 @@ const ModalsContainer: React.FC = () => {
 
   const config: ModalConfig = (ModalComponent as any).modalConfig || {};
 
+  const getModalClassName = () => {
+    if (key === 'filter') return 'filter-modal';
+    return '';
+  };
+
   return (
     <Modal
       key={key}
@@ -36,6 +41,8 @@ const ModalsContainer: React.FC = () => {
       closable={config.closable !== undefined ? config.closable : true}
       title={config.title}
       footer={null}
+      className={getModalClassName()}
+      style={config.style}
     >
       <ModalComponent {...modalState.params} onClose={() => closeModal(key)} />
     </Modal>

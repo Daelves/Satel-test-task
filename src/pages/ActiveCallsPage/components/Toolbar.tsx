@@ -11,7 +11,9 @@ const Toolbar = () => {
   const { open: openFilterModal } = useModal('filter');
 
   const handleOpenFilters = () => {
-    openFilterModal({ currentFilters: {} });
+    openFilterModal({
+      currentFilters: $callsTableState.getState().filters || {},
+    });
   };
 
   return (
