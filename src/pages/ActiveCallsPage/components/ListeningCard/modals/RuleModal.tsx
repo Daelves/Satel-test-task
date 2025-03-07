@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Button } from 'antd';
+import useModal from '../../../../../shared/modals/useModal.ts';
 
 interface RuleModalProps {
   onClose: () => void;
@@ -8,6 +9,7 @@ interface RuleModalProps {
 
 const RuleModal: React.FC<RuleModalProps> = ({ onClose, phoneNumber }) => {
   const [form] = Form.useForm();
+  const { open: openSuccessModal } = useModal('successRule');
 
   useEffect(() => {
     if (phoneNumber) {
@@ -21,6 +23,7 @@ const RuleModal: React.FC<RuleModalProps> = ({ onClose, phoneNumber }) => {
     form.validateFields().then((values) => {
       console.log('Rule submitted:', values);
       onClose();
+      openSuccessModal({ phoneNumber });
       form.resetFields();
     });
   };

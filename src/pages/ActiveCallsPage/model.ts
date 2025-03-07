@@ -7,7 +7,11 @@ import {
   disconnectFromCall,
   resetListening,
 } from './model/events';
-import { destroyRadioPlayer, getRadioStationForCall, initRadioPlayer } from "../../services/radioService.ts";
+import {
+  destroyRadioPlayer,
+  getRadioStationForCall,
+  initRadioPlayer,
+} from '../../services/radioService.ts';
 
 const callsDomain = createDomain();
 const filtersDomain = createDomain();
@@ -21,73 +25,73 @@ export const fetchCallsFx = callsDomain.createEffect(async () => {
 });
 
 export const startListeningFx = listeningDomain.createEffect(
-    async (callId: string) => {
-      console.log('Запуск startListeningFx с ID:', callId);
-      try {
-        const result = await mockCallsService.startListening(callId);
-        console.log('startListeningFx успешно выполнен:', result);
+  async (callId: string) => {
+    console.log('Запуск startListeningFx с ID:', callId);
+    try {
+      const result = await mockCallsService.startListening(callId);
+      console.log('startListeningFx успешно выполнен:', result);
 
-        const stationId = result.radioStationId || getRadioStationForCall(callId);
+      const stationId = result.radioStationId || getRadioStationForCall(callId);
 
-        destroyRadioPlayer();
-        initRadioPlayer(stationId);
+      destroyRadioPlayer();
+      initRadioPlayer(stationId);
 
-        return {
-          ...result,
-          radioStationId: stationId
-        };
-      } catch (error) {
-        console.error('Ошибка в startListeningFx:', error);
-        throw error;
-      }
+      return {
+        ...result,
+        radioStationId: stationId,
+      };
+    } catch (error) {
+      console.error('Ошибка в startListeningFx:', error);
+      throw error;
     }
+  }
 );
 
 export const stopListeningFx = listeningDomain.createEffect(
-    async (callId: string) => {
-      console.log('Запуск stopListeningFx с ID:', callId);
-      try {
-        const result = await mockCallsService.stopListening(callId);
-        console.log('stopListeningFx успешно выполнен:', result);
+  async (callId: string) => {
+    console.log('Запуск stopListeningFx с ID:', callId);
+    try {
+      const result = await mockCallsService.stopListening(callId);
+      console.log('stopListeningFx успешно выполнен:', result);
 
-        destroyRadioPlayer();
+      destroyRadioPlayer();
 
-        return result;
-      } catch (error) {
-        console.error('Ошибка в stopListeningFx:', error);
-        throw error;
-      }
+      return result;
+    } catch (error) {
+      console.error('Ошибка в stopListeningFx:', error);
+      throw error;
     }
+  }
 );
 
 export const switchRadioStationFx = listeningDomain.createEffect(
-    async (callId: string) => {
-      destroyRadioPlayer();
+  async (callId: string) => {
+    destroyRadioPlayer();
 
-      const stationId = getRadioStationForCall(callId);
+    const stationId = getRadioStationForCall(callId);
 
-      initRadioPlayer(stationId);
+    initRadioPlayer(stationId);
 
-      return stationId;
-    }
+    return stationId;
+  }
 );
 
 export const setFilters = filtersDomain.createEvent();
 
 export const $calls = callsDomain
-    .createStore<Call[]>([])
-    .on(fetchCallsFx.doneData, (_, payload) => payload);
+  .createStore<Call[]>([])
+  .on(fetchCallsFx.doneData, (_, payload) => payload);
 
 export const $listeningCall = listeningDomain
-    .createStore<ListeningCall | null>(null)
-    .on(startListeningFx.doneData, (_, payload) => payload)
-    .on(stopListeningFx.done, (state, { params }) => {
-      return null;
-    });
+  .createStore<ListeningCall | null>(null)
+  .on(startListeningFx.doneData, (_, payload) => payload)
+  .on(stopListeningFx.done, (state, { params }) => {
+    return null;
+  });
 
 export const $filters = filtersDomain
-    .createStore({})
-    .on(setFilters, (_, payload) => payload);
+  .createStore({})
+  .on(setFilters, (_, payload) => payload);
 
 // Добавляем логирование для отслеживания событий
 startListeningFx.doneData.watch((payload) => {
@@ -113,7 +117,6 @@ sample({
   target: connectToCall,
 });
 
-
 sample({
   clock: stopListeningFx.done,
   target: disconnectFromCall,
@@ -133,7 +136,7 @@ sample({
   clock: switchCallRequested,
   source: $listeningCall,
   filter: (currentCall, newCallId) =>
-      currentCall !== null && currentCall.id !== newCallId,
+    currentCall !== null && currentCall.id !== newCallId,
   fn: (currentCall) => currentCall!.id,
   target: stopListeningFx,
 });
@@ -149,7 +152,7 @@ sample({
   clock: switchCallRequested,
   source: $listeningCall,
   filter: (currentCall, newCallId) =>
-      currentCall === null || currentCall.id === newCallId,
+    currentCall === null || currentCall.id === newCallId,
   fn: (_, newCallId) => newCallId,
   target: startListeningFx,
 });
