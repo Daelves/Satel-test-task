@@ -1,6 +1,6 @@
 import { createDomain } from 'effector';
 import { formatTime } from '../../../utils/formatters';
-import { closeModal, openModal } from '../../../shared/modals';
+import { closeModal } from '../../../shared/modals';
 
 import { resetListening } from './events.ts';
 import { mockCallsService } from '../../../services/mockService.ts';
@@ -17,6 +17,8 @@ export interface ListeningCallState {
   recordingTimeDisplay: string;
   isDownloadModalVisible: boolean;
   downloadProgress: number;
+  isBackgroundRecording: boolean;
+  backgroundRecordingCallId: string | null;
 }
 
 export type UpdateTimeParams = {
@@ -28,6 +30,11 @@ export type UpdateTimeParams = {
 export const togglePause = listeningCallDomain.createEvent();
 export const updateTime =
   listeningCallDomain.createEvent<UpdateTimeParams | void>();
+
+// События для управления фоновой записью
+export const switchToBackgroundRecording =
+  listeningCallDomain.createEvent<string>();
+export const stopBackgroundRecording = listeningCallDomain.createEvent();
 
 // Эффекты для записи
 export const startRecordingFx = listeningCallDomain.createEffect(
@@ -66,6 +73,8 @@ export const $listeningCallState =
     recordingTimeDisplay: '00:00',
     isDownloadModalVisible: false,
     downloadProgress: 0,
+    isBackgroundRecording: false,
+    backgroundRecordingCallId: null,
   });
 
 $listeningCallState
@@ -113,7 +122,10 @@ $listeningCallState
 
     let recordingTimeDisplay = state.recordingTimeDisplay;
 
-    if (state.isRecording && state.recordingStartTime) {
+    if (
+      (state.isRecording || state.isBackgroundRecording) &&
+      state.recordingStartTime
+    ) {
       const elapsed = now - state.recordingStartTime;
       recordingTimeDisplay = formatTime(elapsed);
     }
@@ -135,6 +147,8 @@ $listeningCallState
     return {
       ...state,
       isRecording: false,
+      isBackgroundRecording: false,
+      backgroundRecordingCallId: null,
       recordingStartTime: null,
       isDownloadModalVisible: false,
       downloadProgress: 0,
@@ -153,12 +167,67 @@ $listeningCallState
       downloadProgress: 0,
     };
   })
-  .reset(resetListening);
+  // Обработчик для перехода к фоновой записи
+  .on(switchToBackgroundRecording, (state, callId) => {
+    // Если запись не ведется, ничего не делаем
+    if (!state.isRecording) return state;
+
+    return {
+      ...state,
+      isRecording: false,
+      isBackgroundRecording: true,
+      backgroundRecordingCallId: callId,
+    };
+  })
+  // Обработчик для остановки фоновой записи
+  .on(stopBackgroundRecording, (state) => {
+    if (!state.isBackgroundRecording) return state;
+
+    return {
+      ...state,
+      isBackgroundRecording: false,
+      backgroundRecordingCallId: null,
+    };
+  })
+  // Сбрасываем только активное прослушивание, но не фоновую запись
+  .on(resetListening, (state) => {
+    // Если ведется запись, переводим ее в фоновый режим
+    if (state.isRecording && !state.isBackgroundRecording) {
+      return {
+        ...state,
+        isPaused: false,
+        listeningStartTime: null,
+        pausedAtTime: null,
+        isRecording: false,
+        isBackgroundRecording: true,
+        backgroundRecordingCallId: state.backgroundRecordingCallId || null,
+        callDuration: '00:00',
+        isDownloadModalVisible: false,
+        downloadProgress: 0,
+      };
+    }
+    return {
+      ...state,
+      isPaused: false,
+      listeningStartTime: null,
+      pausedAtTime: null,
+      isRecording: false,
+      callDuration: '00:00',
+      isDownloadModalVisible: false,
+      downloadProgress: 0,
+    };
+  });
 
 // Селекторы для удобного доступа к данным из компонентов
 export const $isPaused = $listeningCallState.map((state) => state.isPaused);
 export const $isRecording = $listeningCallState.map(
   (state) => state.isRecording
+);
+export const $isActiveRecording = $listeningCallState.map(
+  (state) => state.isRecording
+);
+export const $isBackgroundRecording = $listeningCallState.map(
+  (state) => state.isBackgroundRecording
 );
 export const $callDuration = $listeningCallState.map(
   (state) => state.callDuration
@@ -171,4 +240,7 @@ export const $downloadModalVisible = $listeningCallState.map(
 );
 export const $downloadProgress = $listeningCallState.map(
   (state) => state.downloadProgress
+);
+export const $backgroundRecordingCallId = $listeningCallState.map(
+  (state) => state.backgroundRecordingCallId
 );

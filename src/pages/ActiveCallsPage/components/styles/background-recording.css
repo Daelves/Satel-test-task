@@ -1,0 +1,48 @@
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.background-recording-icon {
+  animation: pulse 1.5s infinite;
+  color: #ff4d4f;
+}
+
+.background-recording-alert {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  transition: all 0.3s ease;
+}
+
+.background-recording-alert:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.background-recording-timer {
+  font-weight: bold;
+  margin: 0 8px;
+}
+
+@media (max-width: 576px) {
+  .background-recording-alert {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: calc(100% - 20px);
+  }
+}

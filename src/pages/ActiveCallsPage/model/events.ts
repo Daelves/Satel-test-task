@@ -1,4 +1,4 @@
-import { createDomain, createEvent } from 'effector';
+import { createDomain } from 'effector';
 
 const eventsDomain = createDomain('callsEvents');
 

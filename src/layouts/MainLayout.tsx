@@ -1,13 +1,27 @@
-// src/layouts/MainLayout.tsx
 import { Layout, Menu } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useUnit } from 'effector-react';
+import { $listeningCall } from '../pages/ActiveCallsPage/model.ts';
+import { $isRecording } from '../pages/ActiveCallsPage/model/listeningCall.ts';
+import {
+  navigationRequested,
+  setNavigateFunction,
+} from '../pages/ActiveCallsPage/model/navigationWarning.ts';
+import BackgroundRecordingIndicator from '../pages/ActiveCallsPage/components/BackgroundRecordingIndicator.tsx';
 
 const { Header, Content, Sider } = Layout;
 
 const MainLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const listeningCall = useUnit($listeningCall);
+  const isRecording = useUnit($isRecording);
+
+  useEffect(() => {
+    setNavigateFunction(navigate);
+    console.log('Navigation function set in MainLayout');
+  }, [navigate]);
 
   const menuItems = useMemo(
     () => [
@@ -19,7 +33,7 @@ const MainLayout: React.FC = () => {
       {
         key: '/userRequests',
         label: 'Журнал обращений',
-        disabled: true,
+        disabled: false,
       },
       {
         key: '/',
@@ -43,9 +57,18 @@ const MainLayout: React.FC = () => {
     return [location.pathname === '/' ? '/' : location.pathname];
   }, [location.pathname]);
 
-  const handleMenuClick = ({ key }: { key: string }) => {
-    navigate(key);
-  };
+  const handleMenuClick = useCallback(
+    ({ key }: { key: string }) => {
+      if (location.pathname === key) return;
+
+      if (listeningCall) {
+        navigationRequested(key);
+      } else {
+        navigate(key);
+      }
+    },
+    [location.pathname, listeningCall, navigate]
+  );
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -67,6 +90,7 @@ const MainLayout: React.FC = () => {
             <Outlet />
           </div>
         </Content>
+        <BackgroundRecordingIndicator />
       </Layout>
     </Layout>
   );
