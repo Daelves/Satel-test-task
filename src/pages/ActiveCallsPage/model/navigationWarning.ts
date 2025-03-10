@@ -22,17 +22,15 @@ export const setNavigateFunction = createEvent<(path: string) => void>();
 $navigateFunction.on(setNavigateFunction, (_, navigate) => navigate);
 
 export const navigateToFx = navigationWarningDomain.createEffect(
-  (path: string) => {
+  async (path: string) => {
+    console.log(`Выполняем навигацию на: ${path}`);
+
     const navigate = $navigateFunction.getState();
     if (navigate) {
-      // Используем функцию navigate из React Router
       navigate(path);
-      console.log(`Navigating to: ${path} using React Router navigate`);
+      console.log(`Навигация выполнена на: ${path}`);
     } else {
-      // Запасной вариант (не рекомендуется)
-      console.warn(
-        'No navigate function provided, using window.location as fallback'
-      );
+      console.warn('Функция навигации не найдена, используем location.href');
       window.location.href = path;
     }
     return path;
@@ -40,39 +38,54 @@ export const navigateToFx = navigationWarningDomain.createEffect(
 );
 
 $pendingNavigationPath
-  .on(navigationRequested, (_, path) => path)
+  .on(navigationRequested, (_, path) => {
+    console.log(`Сохраняем путь для навигации: ${path}`);
+    return path;
+  })
   .reset(navigationCancelled)
-  .reset(navigationConfirmed)
   .reset(navigateToFx.done);
 
 navigationRequested.watch((path) => {
+  console.log(`Запрос на навигацию: ${path}`);
   const listeningCall = $listeningCall.getState();
 
   if (listeningCall) {
     const isRecording = $isRecording.getState();
+    console.log(
+      `Показываем предупреждение. Запись: ${isRecording ? 'активна' : 'неактивна'}`
+    );
 
     openModal({
       key: 'navigationWarning',
       params: {
         isRecording,
-        onConfirm: () => navigationConfirmed(),
+        targetPath: path, // Передаем путь в модальное окно
+        onConfirm: () => {
+          console.log(`Подтверждение перехода на: ${path}`);
+          navigationConfirmed();
+        },
       },
     });
   } else {
-    // Если нет активного прослушивания, просто переходим
+    console.log(`Прямая навигация на: ${path}`);
     navigateToFx(path);
   }
 });
 
 navigationConfirmed.watch(() => {
   const path = $pendingNavigationPath.getState();
+  console.log(`Подтверждение навигации, сохраненный путь: ${path}`);
+
   const listeningCall = $listeningCall.getState();
   const isRecording = $isRecording.getState();
 
   if (listeningCall) {
     if (isRecording) {
+      console.log(`Переводим запись в фоновый режим: ${listeningCall.id}`);
       switchToBackgroundRecording(listeningCall.id);
     }
+
+    console.log(`Отключаемся от звонка: ${listeningCall.id}`);
     disconnectCallRequested(listeningCall.id);
   }
 
@@ -80,11 +93,22 @@ navigationConfirmed.watch(() => {
     closeModal('navigationWarning');
 
     setTimeout(() => {
-      navigateToFx(path);
-    }, 100);
+      const currentPath = $pendingNavigationPath.getState();
+      console.log(`Отложенная навигация. Текущий путь: ${currentPath || path}`);
+
+      // На всякий случай проверяем путь еще раз
+      if (currentPath || path) {
+        navigateToFx(currentPath || path);
+      } else {
+        console.error('Ошибка: путь для навигации не найден!');
+      }
+    }, 500);
+  } else {
+    console.error('Ошибка: нет сохраненного пути для навигации!');
   }
 });
 
 navigationCancelled.watch(() => {
+  console.log('Навигация отменена');
   closeModal('navigationWarning');
 });

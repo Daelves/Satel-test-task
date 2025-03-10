@@ -42,7 +42,6 @@ const RecordingTimeDisplay: React.FC<RecordingTimeDisplayProps> = React.memo(
       const updateRecordingTime = () => {
         const now = Date.now();
 
-        // Применяем throttling - обновляем не чаще раз в 200 мс
         if (
           now - lastUpdateTimeRef.current >= 200 &&
           recordingStartTimeRef.current
