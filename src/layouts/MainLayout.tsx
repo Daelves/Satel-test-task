@@ -62,6 +62,9 @@ const MainLayout: React.FC = () => {
       if (location.pathname === key) return;
 
       if (listeningCall) {
+        console.log(
+          'Есть активное прослушивание, запрашиваем навигацию через модальное окно'
+        );
         navigationRequested(key);
       } else {
         navigate(key);

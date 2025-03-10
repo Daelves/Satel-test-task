@@ -1,3 +1,57 @@
+.background-recording-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  width: 350px;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+.background-recording-card {
+  background-color: #f6ffed !important;
+  border: 1px solid #b7eb8f !important;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.background-recording-card .ant-card-body {
+  padding: 8px !important;
+}
+
+.background-recording-header {
+  position: relative;
+  text-align: right;
+  height: 8px;
+}
+
+.close-icon {
+  position: absolute;
+  right: 0;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 1;
+}
+
+.close-icon:hover {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.background-recording-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 12px 8px 8px;
+  gap: 12px;
+}
+
+.recording-icon {
+  color: #52c41a;
+  font-size: 20px;
+  animation: pulse 1.5s infinite;
+}
+
 @keyframes pulse {
   0% {
     opacity: 1;
@@ -10,39 +64,74 @@
   }
 }
 
-.background-recording-icon {
-  animation: pulse 1.5s infinite;
-  color: #ff4d4f;
+.recording-text {
+  flex: 0.8;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.background-recording-alert {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-width: 500px;
-  padding: 8px 16px;
+.recording-details {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.recording-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #ff4d4f;
+  display: inline-block;
+}
+
+.stop-button {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+  color: white;
+  padding: 0 12px;
+  height: 32px;
   border-radius: 4px;
-  background-color: #f6ffed;
-  border: 1px solid #b7eb8f;
-  transition: all 0.3s ease;
 }
 
-.background-recording-alert:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.stop-button:hover {
+  background-color: #ff7875;
+  border-color: #ff7875;
 }
 
-.background-recording-timer {
-  font-weight: bold;
-  margin: 0 8px;
+.stop-button-icon-only {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+  color: white;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.stop-button-icon-only:hover {
+  background-color: #ff7875;
+  border-color: #ff7875;
 }
 
 @media (max-width: 576px) {
-  .background-recording-alert {
-    bottom: 10px;
-    right: 10px;
-    left: 10px;
-    max-width: calc(100% - 20px);
+  .background-recording-container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+
+  .background-recording-content {
+    flex-wrap: wrap;
+  }
+
+  .stop-button-icon-only {
+    margin-top: 8px;
+    margin-left: auto;
   }
 }
