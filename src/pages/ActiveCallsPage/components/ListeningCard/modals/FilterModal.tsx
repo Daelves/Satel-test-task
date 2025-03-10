@@ -5,7 +5,6 @@ import {
   Button,
   Select,
   DatePicker,
-  Space,
   Checkbox,
   Typography,
 } from 'antd';

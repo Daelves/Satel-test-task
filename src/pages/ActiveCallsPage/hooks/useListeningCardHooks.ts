@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useUnit } from 'effector-react';
 
 import { $listeningCall } from '../model.ts';
@@ -17,10 +17,8 @@ export const useDownloadSimulation = () => {
   const { open: openDownloadModal } = useModal('download');
   const listeningCall = useUnit($listeningCall);
 
-  // Отслеживаем изменение состояния модального окна
   useEffect(() => {
     if (isDownloadModalVisible && listeningCall) {
-      // Явно открываем модальное окно, если оно должно быть видимым
       openDownloadModal({ callId: listeningCall.id });
 
       let progress = 0;

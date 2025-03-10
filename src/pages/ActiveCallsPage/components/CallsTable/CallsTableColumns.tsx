@@ -1,9 +1,7 @@
-// src/pages/ActiveCallsPage/components/CallsTable/CallsTableColumns.tsx
 import React from 'react';
 import type { TableProps } from 'antd';
 import { Button, Space, Tooltip, Typography } from 'antd';
 import {
-  AudioOutlined,
   AudioMutedOutlined,
   CustomerServiceOutlined,
   CopyOutlined,

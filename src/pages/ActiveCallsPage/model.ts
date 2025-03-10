@@ -12,6 +12,11 @@ import {
   getRadioStationForCall,
   initRadioPlayer,
 } from '../../services/radioService.ts';
+import {
+  $backgroundRecordingCallId,
+  $isRecording,
+  switchToBackgroundRecording,
+} from './model/listeningCall.ts';
 
 const callsDomain = createDomain();
 const filtersDomain = createDomain();
@@ -54,7 +59,12 @@ export const stopListeningFx = listeningDomain.createEffect(
       const result = await mockCallsService.stopListening(callId);
       console.log('stopListeningFx успешно выполнен:', result);
 
-      destroyRadioPlayer();
+      const isRecording = $isRecording.getState();
+      if (isRecording) {
+        switchToBackgroundRecording(callId);
+      } else {
+        destroyRadioPlayer();
+      }
 
       return result;
     } catch (error) {
@@ -105,6 +115,17 @@ startListeningFx.failData.watch((error) => {
 $listeningCall.watch((state) => {
   console.log('$listeningCall обновился:', state);
 });
+
+export const getIsCallRecording = (callId: string) => {
+  const backgroundRecordingCallId = $backgroundRecordingCallId.getState();
+  const listeningCall = $listeningCall.getState();
+  const isRecording = $isRecording.getState();
+
+  return (
+    (isRecording && listeningCall?.id === callId) ||
+    backgroundRecordingCallId === callId
+  );
+};
 
 sample({
   source: startListeningFx.doneData,

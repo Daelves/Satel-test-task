@@ -4,10 +4,8 @@ import CallsTable from './components/CallsTable/CallsTable.tsx';
 import { useEffect } from 'react';
 import { createWebSocketConnection } from '../../api/websocket.ts';
 import { updateCallsList } from './model/callsTable.ts';
-import ListeningCallCard from './components/ListeningCallCard.tsx';
 import { useUnit } from 'effector-react';
 import { $listeningCall } from './model.ts';
-import ModalDebugger from '../../components/ModalDebugger.tsx';
 
 const ActiveCallsPage = () => {
   const listeningCall = useUnit($listeningCall);

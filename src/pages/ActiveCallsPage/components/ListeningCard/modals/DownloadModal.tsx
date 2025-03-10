@@ -5,7 +5,6 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { closeDownloadModal } from '../../../model/listeningCall.ts';
 import { ModalFC } from '../../../../../shared/modals/types.ts';
 import { formatDateTime } from '../../../../../utils/formatters.ts';
-import { $listeningCall } from '../../../model.ts';
 import Title from 'antd/es/typography/Title';
 
 interface DownloadModalProps {
