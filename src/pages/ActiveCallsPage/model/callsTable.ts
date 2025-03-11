@@ -140,138 +140,135 @@ export const $listenedCalls = createStore<Record<string, ListenedCallInfo>>({});
 
 // Обработка событий
 $callsTableState
-  .on(fetchCallsFx.doneData, (state, { calls, totalCalls }) => ({
-    ...state,
-    calls,
-    totalCalls,
-    isLoading: false,
-    error: null,
-  }))
-  .on(fetchCallsFx.fail, (state, { error }) => ({
-    ...state,
-    isLoading: false,
-    error: error.message,
-  }))
-  .on(fetchCallsFx.pending, (state, isPending) => ({
-    ...state,
-    isLoading: isPending,
-  }))
-  .on(changePage, (state, page) => ({
-    ...state,
-    page,
-  }))
-  .on(changePerPage, (state, perPage) => {
-    const { calls, totalCalls } = processCallsData(
-        state.allCalls,
-        1,
-        perPage,
-        state.sortField,
-        state.sortOrder,
-        state.filters
-    );
-
-    return {
+    .on(fetchCallsFx.doneData, (state, { calls, totalCalls }) => ({
       ...state,
-      perPage,
-      page: 1,
       calls,
       totalCalls,
-    };
-  })
-  .on(applyFilters, (state, filters) => {
-        const { calls, totalCalls } = processCallsData(
-            state.allCalls,
-            1,
-            state.perPage,
-            state.sortField,
-            state.sortOrder,
-            filters
-        );
-
-        return {
-          ...state,
-          filters,
-          page: 1,
-          calls,
-          totalCalls,
-        };
-      })
-      .on(setAllCalls, (state, allCalls) => {
-        const { calls, totalCalls } = processCallsData(
-            allCalls,
-            state.page,
-            state.perPage,
-            state.sortField,
-            state.sortOrder,
-            state.filters
-        );
-
-        return {
-          ...state,
-          allCalls,
-          calls,
-          totalCalls,
-          isLoading: false,
-        };
-      })
-      .on(applyFilters, (state, filters) => {
-        const { calls, totalCalls } = processCallsData(
-            state.allCalls,
-            1, // Сбрасываем на первую страницу
-            state.perPage,
-            state.sortField,
-            state.sortOrder,
-            filters
-        );
-
-        return {
-          ...state,
-          filters,
-          page: 1,
-          calls,
-          totalCalls,
-        };
-      })
-
-      .on(setAllCalls, (state, allCalls) => {
-        const { calls, totalCalls } = processCallsData(
-            allCalls,
-            state.page,
-            state.perPage,
-            state.sortField,
-            state.sortOrder,
-            state.filters
-        );
-
-        return {
-          ...state,
-          allCalls,
-          calls,
-          totalCalls,
-          isLoading: false,
-        };
-      })
-
-  .on(updateCallsList, (state, calls) => {
-    const { calls: processedCalls, totalCalls } = processCallsData(
-        calls,
-        state.page,
-        state.perPage,
-        state.sortField,
-        state.sortOrder,
-        state.filters
-    );
-
-    return {
-      ...state,
-      allCalls: calls,
-      calls: processedCalls,
-      totalCalls,
       isLoading: false,
-    };
-  })
+      error: null,
+    }))
+    .on(fetchCallsFx.fail, (state, { error }) => ({
+      ...state,
+      isLoading: false,
+      error: error.message,
+    }))
+    .on(fetchCallsFx.pending, (state, isPending) => ({
+      ...state,
+      isLoading: isPending,
+    }))
+    .on(changePage, (state, page) => {
+      const { calls, totalCalls } = processCallsData(
+          state.allCalls,
+          page,
+          state.perPage,
+          state.sortField,
+          state.sortOrder,
+          state.filters
+      );
 
+      return {
+        ...state,
+        page,
+        calls,
+        totalCalls,
+      };
+    })
+    .on(changePerPage, (state, perPage) => {
+      const { calls, totalCalls } = processCallsData(
+          state.allCalls,
+          1, // Сбрасываем на первую страницу
+          perPage,
+          state.sortField,
+          state.sortOrder,
+          state.filters
+      );
+
+      return {
+        ...state,
+        perPage,
+        page: 1, // Сбрасываем на первую страницу при изменении количества записей на странице
+        calls,
+        totalCalls,
+      };
+    })
+    .on(changeSort, (state, { field, order }) => {
+      const { calls, totalCalls } = processCallsData(
+          state.allCalls,
+          state.page,
+          state.perPage,
+          field,
+          order,
+          state.filters
+      );
+
+      return {
+        ...state,
+        sortField: field,
+        sortOrder: order,
+        calls,
+        totalCalls,
+      };
+    })
+    .on(applyFilters, (state, filters) => {
+      const { calls, totalCalls } = processCallsData(
+          state.allCalls,
+          1, // Сбрасываем на первую страницу
+          state.perPage,
+          state.sortField,
+          state.sortOrder,
+          filters
+      );
+
+      return {
+        ...state,
+        filters,
+        page: 1, // Сбрасываем на первую страницу при применении фильтров
+        calls,
+        totalCalls,
+      };
+    })
+    // Установка всех звонков и их первичная обработка
+    .on(setAllCalls, (state, allCalls) => {
+      const { calls, totalCalls } = processCallsData(
+          allCalls,
+          state.page,
+          state.perPage,
+          state.sortField,
+          state.sortOrder,
+          state.filters
+      );
+
+      return {
+        ...state,
+        allCalls,
+        calls,
+        totalCalls,
+        isLoading: false,
+      };
+    })
+    // Обновление списка звонков через WebSocket - теперь обновляем allCalls
+    .on(updateCallsList, (state, calls) => {
+      // Устанавливаем все звонки и затем применяем обработку
+      const { calls: processedCalls, totalCalls } = processCallsData(
+          calls,
+          state.page,
+          state.perPage,
+          state.sortField,
+          state.sortOrder,
+          state.filters
+      );
+
+      return {
+        ...state,
+        allCalls: calls, // Сохраняем полный список
+        calls: processedCalls, // Отображаем обработанные данные
+        totalCalls,
+        isLoading: false,
+      };
+    })
+    // Обновление данных конкретного звонка
     .on(updateCallData, (state, updatedCall) => {
+      // Обновляем звонок в полном списке
       const updatedAllCalls = state.allCalls.map(call =>
           call.id === updatedCall.id ? updatedCall : call
       );
@@ -291,31 +288,7 @@ $callsTableState
         calls: processedCalls,
         totalCalls,
       };
-    })
-
-
-  .on(updateCallData, (state, updatedCall) => {
-    const updatedAllCalls = state.allCalls.map(call =>
-        call.id === updatedCall.id ? updatedCall : call
-    );
-
-    const { calls: processedCalls, totalCalls } = processCallsData(
-        updatedAllCalls,
-        state.page,
-        state.perPage,
-        state.sortField,
-        state.sortOrder,
-        state.filters
-    );
-
-    return {
-      ...state,
-      allCalls: updatedAllCalls,
-      calls: processedCalls,
-      totalCalls,
-    };
-  });
-
+    });
 // Запуск загрузки звонков при изменении параметров
 sample({
   clock: fetchCallsRequested,
