@@ -17,7 +17,6 @@ export interface GetColumnsProps {
   onConnectCall: (call: CallRecord) => void;
   onDisconnectCall: () => void;
   onCopyAppealsId: (appealsId: string) => void;
-
 }
 
 export const getColumns = ({

@@ -5,12 +5,12 @@ import { message, Table } from 'antd';
 import type { TableProps } from 'antd';
 import {
   $callsTableState,
-  fetchCallsRequested,
   changePage,
   changePerPage,
-  updateCallsList,
   $listenedCalls,
-  CallRecord, setAllCalls, changeSort,
+  CallRecord,
+  setAllCalls,
+  changeSort,
 } from '../../model/callsTable';
 
 import getColumns from './CallsTableColumns';
@@ -75,11 +75,10 @@ const CallsTable: React.FC = () => {
   });
 
   const handleTableChange: TableProps<CallRecord>['onChange'] = (
-      pagination,
-      filters,
-      sorter
+    pagination,
+    filters,
+    sorter
   ) => {
-
     if (pagination.current) {
       changePage(pagination.current);
     }

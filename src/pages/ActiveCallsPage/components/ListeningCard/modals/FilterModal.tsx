@@ -92,8 +92,15 @@ const FilterModal: ModalFC<FilterModalProps> = ({
           <div className='filter-section'>
             <Title level={5}>Участники звонка</Title>
 
-            <Form.Item name='phoneNumber' label='Телефонный номер'>
-              <Input placeholder='Введите телефонный номер участника' />
+            <Form.Item
+              name='phoneNumber'
+              label='Телефонный номер'
+              tooltip='Введите полный номер или его часть для поиска'
+            >
+              <Input
+                placeholder='Введите телефонный номер участника'
+                allowClear
+              />
             </Form.Item>
 
             <Button
