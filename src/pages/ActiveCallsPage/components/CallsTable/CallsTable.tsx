@@ -10,7 +10,7 @@ import {
   changePerPage,
   updateCallsList,
   $listenedCalls,
-  CallRecord,
+  CallRecord, setAllCalls, changeSort,
 } from '../../model/callsTable';
 
 import getColumns from './CallsTableColumns';
@@ -35,12 +35,7 @@ const CallsTable: React.FC = () => {
   // Инициализация
   useEffect(() => {
     if (isDevelopment()) {
-      // Эмуляция загрузки данных с сервера во время разработки
-      setTimeout(() => {
-        updateCallsList(mockCalls);
-      }, 500);
-    } else {
-      fetchCallsRequested();
+      setAllCalls(mockCalls);
     }
   }, []);
 
@@ -88,8 +83,18 @@ const CallsTable: React.FC = () => {
     if (pagination.current) {
       changePage(pagination.current);
     }
-    if (pagination.pageSize) {
+    if (pagination.pageSize && pagination.pageSize !== perPage) {
       changePerPage(pagination.pageSize);
+    }
+
+    if (sorter && !Array.isArray(sorter)) {
+      const { field, order } = sorter;
+      if (field) {
+        changeSort({
+          field: field as string,
+          order: order as 'ascend' | 'descend' | null,
+        });
+      }
     }
   };
 

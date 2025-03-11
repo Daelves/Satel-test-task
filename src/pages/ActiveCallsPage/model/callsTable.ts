@@ -11,6 +11,7 @@ export interface CallRecord {
 
 export interface CallsTableState {
   calls: CallRecord[];
+  allCalls: CallRecord[];
   isLoading: boolean;
   error: string | null;
   totalCalls: number;
@@ -36,8 +37,9 @@ export const changeSort = createEvent<{
   order: 'ascend' | 'descend' | null;
 }>();
 export const applyFilters = createEvent<Record<string, any>>();
-export const updateCallsList = createEvent<CallRecord[]>(); // обновление списка звонков через WebSocket
-export const updateCallData = createEvent<CallRecord>(); // обновление данных конкретного звонка
+export const setAllCalls = createEvent<CallRecord[]>();
+export const updateCallsList = createEvent<CallRecord[]>();
+export const updateCallData = createEvent<CallRecord>();
 
 // Эффект загрузки звонков с бэкенда
 export const fetchCallsFx = createEffect(
@@ -56,9 +58,74 @@ export const fetchCallsFx = createEffect(
   }
 );
 
+const processCallsData = (
+    allCalls: CallRecord[],
+    page: number,
+    perPage: number,
+    sortField?: string,
+    sortOrder?: 'ascend' | 'descend' | null,
+    filters?: Record<string, any>
+) => {
+  let processedCalls = [...allCalls];
+
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        processedCalls = processedCalls.filter((call) => {
+          // Для каждого фильтра нужна своя логика
+          if (key === 'isRecording') {
+            return call.isRecording === value;
+          }
+          if (key === 'appealsId') {
+            return call.appealsId.includes(String(value));
+          }
+          return true;
+        });
+      }
+    });
+  }
+
+  if (sortField && sortOrder) {
+    processedCalls.sort((a, b) => {
+      const field = sortField as keyof CallRecord;
+      let result = 0;
+
+      if (field === 'startTime') {
+        result = a.startTime.getTime() - b.startTime.getTime();
+      } else if (field === 'appealsId') {
+        result = a.appealsId.localeCompare(b.appealsId);
+      } else {
+        const aValue = a[field];
+        const bValue = b[field];
+
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          result = aValue.localeCompare(bValue);
+        } else if (typeof aValue === 'number' && typeof bValue === 'number') {
+          result = aValue - bValue;
+        }
+      }
+
+      return sortOrder === 'ascend' ? result : -result;
+    });
+  }
+
+  const totalCalls = processedCalls.length;
+
+  // Применяем пагинацию
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedCalls = processedCalls.slice(startIndex, endIndex);
+
+  return {
+    calls: paginatedCalls,
+    totalCalls,
+  };
+};
+
 // Стор с состоянием таблицы
 export const $callsTableState = createStore<CallsTableState>({
   calls: [],
+  allCalls: [],
   isLoading: false,
   error: null,
   totalCalls: 0,
@@ -93,108 +160,165 @@ $callsTableState
     ...state,
     page,
   }))
-  .on(changePerPage, (state, perPage) => ({
-    ...state,
-    perPage,
-    page: 1, // Сбрасываем на первую страницу при изменении количества записей на странице
-  }))
-  .on(changeSort, (state, { field, order }) => ({
-    ...state,
-    sortField: field,
-    sortOrder: order,
-    page: 1, // Сбрасываем на первую страницу при изменении сортировки
-  }))
-  .on(applyFilters, (state, filters) => ({
-    ...state,
-    filters,
-    page: 1, // Сбрасываем на первую страницу при применении фильтров
-  }))
-  // Обновление списка звонков через WebSocket
-  .on(updateCallsList, (state, calls) => {
-    // Применяем текущие сортировки и фильтры
-    let filteredCalls = [...calls];
-
-    // Применяем фильтры
-    if (state.filters) {
-      Object.entries(state.filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          filteredCalls = filteredCalls.filter((call) => {
-            // Для каждого фильтра нужна своя логика
-            if (key === 'isRecording') {
-              return call.isRecording === value;
-            }
-            if (key === 'appealsId') {
-              return call.appealsId.includes(value);
-            }
-            // Добавьте другие фильтры по необходимости
-            return true;
-          });
-        }
-      });
-    }
-
-    // Применяем сортировку
-    if (state.sortField && state.sortOrder) {
-      filteredCalls.sort((a, b) => {
-        const field = state.sortField as keyof CallRecord;
-        const aValue = a[field];
-        const bValue = b[field];
-
-        let result = 0;
-
-        if (field === 'startTime') {
-          result =
-            new Date(aValue as Date).getTime() -
-            new Date(bValue as Date).getTime();
-        } else if (typeof aValue === 'string' && typeof bValue === 'string') {
-          result = aValue.localeCompare(bValue);
-        }
-
-        return state.sortOrder === 'ascend' ? result : -result;
-      });
-    }
-
-    const totalCalls = filteredCalls.length;
-
-    // Применяем пагинацию
-    const startIndex = (state.page - 1) * state.perPage;
-    const endIndex = startIndex + state.perPage;
-    const paginatedCalls = filteredCalls.slice(startIndex, endIndex);
+  .on(changePerPage, (state, perPage) => {
+    const { calls, totalCalls } = processCallsData(
+        state.allCalls,
+        1,
+        perPage,
+        state.sortField,
+        state.sortOrder,
+        state.filters
+    );
 
     return {
       ...state,
-      calls: paginatedCalls,
+      perPage,
+      page: 1,
+      calls,
       totalCalls,
     };
   })
-  // Обновление данных конкретного звонка
-  .on(updateCallData, (state, updatedCall) => {
-    const callIndex = state.calls.findIndex(
-      (call) => call.id === updatedCall.id
+  .on(applyFilters, (state, filters) => {
+        const { calls, totalCalls } = processCallsData(
+            state.allCalls,
+            1,
+            state.perPage,
+            state.sortField,
+            state.sortOrder,
+            filters
+        );
+
+        return {
+          ...state,
+          filters,
+          page: 1,
+          calls,
+          totalCalls,
+        };
+      })
+      .on(setAllCalls, (state, allCalls) => {
+        const { calls, totalCalls } = processCallsData(
+            allCalls,
+            state.page,
+            state.perPage,
+            state.sortField,
+            state.sortOrder,
+            state.filters
+        );
+
+        return {
+          ...state,
+          allCalls,
+          calls,
+          totalCalls,
+          isLoading: false,
+        };
+      })
+      .on(applyFilters, (state, filters) => {
+        const { calls, totalCalls } = processCallsData(
+            state.allCalls,
+            1, // Сбрасываем на первую страницу
+            state.perPage,
+            state.sortField,
+            state.sortOrder,
+            filters
+        );
+
+        return {
+          ...state,
+          filters,
+          page: 1,
+          calls,
+          totalCalls,
+        };
+      })
+
+      .on(setAllCalls, (state, allCalls) => {
+        const { calls, totalCalls } = processCallsData(
+            allCalls,
+            state.page,
+            state.perPage,
+            state.sortField,
+            state.sortOrder,
+            state.filters
+        );
+
+        return {
+          ...state,
+          allCalls,
+          calls,
+          totalCalls,
+          isLoading: false,
+        };
+      })
+
+  .on(updateCallsList, (state, calls) => {
+    const { calls: processedCalls, totalCalls } = processCallsData(
+        calls,
+        state.page,
+        state.perPage,
+        state.sortField,
+        state.sortOrder,
+        state.filters
     );
 
-    // Если звонок найден в текущем списке, обновляем его
-    if (callIndex >= 0) {
-      const updatedCalls = [...state.calls];
-      updatedCalls[callIndex] = updatedCall;
+    return {
+      ...state,
+      allCalls: calls,
+      calls: processedCalls,
+      totalCalls,
+      isLoading: false,
+    };
+  })
+
+    .on(updateCallData, (state, updatedCall) => {
+      const updatedAllCalls = state.allCalls.map(call =>
+          call.id === updatedCall.id ? updatedCall : call
+      );
+
+      const { calls: processedCalls, totalCalls } = processCallsData(
+          updatedAllCalls,
+          state.page,
+          state.perPage,
+          state.sortField,
+          state.sortOrder,
+          state.filters
+      );
+
       return {
         ...state,
-        calls: updatedCalls,
+        allCalls: updatedAllCalls,
+        calls: processedCalls,
+        totalCalls,
       };
-    }
+    })
 
-    return state;
+
+  .on(updateCallData, (state, updatedCall) => {
+    const updatedAllCalls = state.allCalls.map(call =>
+        call.id === updatedCall.id ? updatedCall : call
+    );
+
+    const { calls: processedCalls, totalCalls } = processCallsData(
+        updatedAllCalls,
+        state.page,
+        state.perPage,
+        state.sortField,
+        state.sortOrder,
+        state.filters
+    );
+
+    return {
+      ...state,
+      allCalls: updatedAllCalls,
+      calls: processedCalls,
+      totalCalls,
+    };
   });
 
 // Запуск загрузки звонков при изменении параметров
 sample({
-  clock: [
-    fetchCallsRequested,
-    changePage,
-    changePerPage,
-    changeSort,
-    applyFilters,
-  ],
+  clock: fetchCallsRequested,
   source: $callsTableState,
   fn: (state) => ({
     page: state.page,
@@ -206,7 +330,6 @@ sample({
   target: fetchCallsFx,
 });
 
-// Обновление информации о прослушанных звонках
 $listenedCalls.on(connectToCall, (state, { id }) => ({
   ...state,
   [id]: {
