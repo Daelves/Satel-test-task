@@ -72,14 +72,14 @@ const CallsTable: React.FC = () => {
     onConnectCall: handleConnectCall,
     onDisconnectCall: handleDisconnectCall,
     onCopyAppealsId: handleCopyAppealsId,
-    onDownloadCallInfo: handleDownloadCallInfo,
   });
 
   const handleTableChange: TableProps<CallRecord>['onChange'] = (
-    pagination,
-    filters,
-    sorter
+      pagination,
+      filters,
+      sorter
   ) => {
+
     if (pagination.current) {
       changePage(pagination.current);
     }
@@ -117,6 +117,7 @@ const CallsTable: React.FC = () => {
           showTotal: (total) => `Всего ${total} записей`,
         }}
         onChange={handleTableChange}
+        sortDirections={['ascend', 'descend']}
         rowClassName={(record) =>
           listeningCall?.id === record.id ? 'active-listening-row' : ''
         }
