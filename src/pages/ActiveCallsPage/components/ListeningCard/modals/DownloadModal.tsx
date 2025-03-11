@@ -77,7 +77,7 @@ const DownloadModal: ModalFC<DownloadModalProps> = ({
           >
             <Text>Участники:</Text>
             <div style={{ paddingLeft: 24 }}>
-              {participants.map((participant, index) => (
+              {participants?.map((participant, index) => (
                 <div key={index} style={{ textAlign: 'right' }}>
                   <Text strong>{participant}</Text>
                 </div>

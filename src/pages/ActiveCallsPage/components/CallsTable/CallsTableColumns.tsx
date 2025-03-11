@@ -17,7 +17,7 @@ export interface GetColumnsProps {
   onConnectCall: (call: CallRecord) => void;
   onDisconnectCall: () => void;
   onCopyAppealsId: (appealsId: string) => void;
-  onDownloadCallInfo: (callId: string) => void;
+
 }
 
 export const getColumns = ({
@@ -26,7 +26,6 @@ export const getColumns = ({
   onConnectCall,
   onDisconnectCall,
   onCopyAppealsId,
-  onDownloadCallInfo,
 }: GetColumnsProps): TableProps<CallRecord>['columns'] => {
   const formatParticipants = (participants: string[]) => {
     const visibleCount = 2;
@@ -107,7 +106,7 @@ export const getColumns = ({
           />
         </Space>
       ),
-      sorter: (a, b) => a.appealsId.localeCompare(b.appealsId),
+      sorter: true,
     },
     {
       title: 'Время начала',
@@ -125,8 +124,7 @@ export const getColumns = ({
           second: '2-digit',
         }),
       // defaultSortOrder: 'descend',
-      // sorter: (a, b) =>
-      //     new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+      sorter: true,
     },
     {
       title: 'Участники',

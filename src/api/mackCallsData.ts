@@ -28,7 +28,7 @@ const generateRecentDate = (): Date => {
   return now;
 };
 
-export const generateMockCalls = (count: number = 15): CallRecord[] => {
+export const generateMockCalls = (count: number = 35): CallRecord[] => {
   const calls: CallRecord[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -51,4 +51,4 @@ export const generateMockCalls = (count: number = 15): CallRecord[] => {
   return calls.sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
 };
 
-export const mockCalls = generateMockCalls(15);
+export const mockCalls = generateMockCalls(45);
